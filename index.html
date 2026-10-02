@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manajemen Dokumen Digital — RPS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EEE3;
+    --paper-raised:#FAF8F2;
+    --ink:#22262B;
+    --ink-soft:#585B52;
+    --navy:#1E3A52;
+    --navy-deep:#13293D;
+    --kraft:#9C6B30;
+    --stamp:#A6402B;
+    --sage:#4E6F5C;
+    --line:#D9D2C0;
+    --line-strong:#C3B99E;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;
+    font-size:16px;
+    line-height:1.55;
+  }
+  h1,h2,h3{
+    font-family:"Fraunces","Georgia",serif;
+    font-weight:600;
+    color:var(--navy-deep);
+    margin:0;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+
+  /* ---------- header / cover ---------- */
+  header.cover{
+    background:var(--navy-deep);
+    color:var(--paper-raised);
+    position:relative;
+    overflow:hidden;
+    padding:64px 0 48px;
+  }
+  header.cover::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      repeating-linear-gradient(180deg, rgba(255,255,255,.035) 0 1px, transparent 1px 28px);
+    pointer-events:none;
+  }
+  .cover-inner{position:relative;}
+  .eyebrow-row{
+    display:flex;align-items:center;gap:14px;
+    margin-bottom:22px;
+  }
+  .course-code{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:13px;
+    letter-spacing:.04em;
+    color:#C9B98C;
+    border:1px solid rgba(201,185,140,.45);
+    border-radius:3px;
+    padding:3px 9px;
+  }
+  .doc-type{font-size:14px;color:#9FB3C2;}
+  header.cover h1{
+    font-size:clamp(34px,5vw,52px);
+    line-height:1.08;
+    max-width:14ch;
+    color:#fff;
+  }
+  .cover-sub{
+    margin-top:14px;
+    font-size:18px;
+    color:#C7D3DA;
+    max-width:48ch;
+  }
+  .cover-meta{
+    margin-top:38px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:0;
+    border-top:1px solid rgba(255,255,255,.18);
+  }
+  .cover-meta div{
+    padding:16px 20px 0 0;
+    border-left:1px solid rgba(255,255,255,.18);
+    padding-left:20px;
+  }
+  .cover-meta div:first-child{border-left:none;padding-left:0;}
+  .cover-meta .label{
+    font-size:12px;text-transform:uppercase;letter-spacing:.08em;
+    color:#8EA2B1;margin-bottom:4px;
+  }
+  .cover-meta .value{font-size:16px;color:#F2EEE3;font-weight:500;}
+
+  /* ---------- nav ---------- */
+  nav.toc{
+    background:var(--paper-raised);
+    border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:10;
+  }
+  nav.toc .wrap{
+    display:flex;gap:4px;overflow-x:auto;
+    padding-top:0;padding-bottom:0;
+  }
+  nav.toc a{
+    display:block;
+    white-space:nowrap;
+    font-size:14px;
+    padding:14px 14px;
+    text-decoration:none;
+    color:var(--ink-soft);
+    border-bottom:2px solid transparent;
+  }
+  nav.toc a:hover{color:var(--navy-deep);border-bottom-color:var(--line-strong);}
+
+  /* ---------- sections ---------- */
+  section{padding:52px 0;border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+  .section-head{
+    display:flex;align-items:baseline;gap:12px;
+    margin-bottom:24px;
+  }
+  .section-num{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:13px;color:var(--kraft);
+  }
+  section h2{font-size:28px;}
+  .lede{max-width:72ch;color:var(--ink-soft);font-size:17px;}
+
+  /* identitas */
+  .id-table{width:100%;border-collapse:collapse;max-width:640px;margin-top:6px;}
+  .id-table tr{border-bottom:1px solid var(--line);}
+  .id-table tr:last-child{border-bottom:none;}
+  .id-table td{padding:10px 0;font-size:15px;vertical-align:top;}
+  .id-table td:first-child{color:var(--ink-soft);width:190px;}
+  .id-table td:last-child{font-weight:500;}
+
+  /* deskripsi */
+  .desc-text{max-width:72ch;font-size:16px;color:var(--ink);margin-top:18px;}
+
+  /* CPMK */
+  .cpmk-list{list-style:none;margin:0;padding:0;max-width:72ch;counter-reset:cpmk;}
+  .cpmk-list li{
+    counter-increment:cpmk;
+    display:flex;gap:16px;
+    padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .cpmk-list li:first-child{border-top:none;}
+  .cpmk-list li::before{
+    content:counter(cpmk);
+    font-family:"Fraunces",serif;
+    font-size:15px;font-weight:600;
+    color:var(--kraft);
+    flex:0 0 22px;
+  }
+
+  /* RPS table */
+  .table-scroll{overflow-x:auto;margin-top:8px;border:1px solid var(--line);border-radius:4px;}
+  table.rps{width:100%;border-collapse:collapse;min-width:980px;background:var(--paper-raised);}
+  table.rps caption{text-align:left;}
+  table.rps th{
+    background:var(--navy-deep);
+    color:#F2EEE3;
+    font-weight:500;
+    font-size:12.5px;
+    text-align:left;
+    padding:12px 14px;
+    letter-spacing:.01em;
+  }
+  table.rps td{
+    padding:14px;
+    font-size:13.5px;
+    vertical-align:top;
+    border-top:1px solid var(--line);
+  }
+  table.rps tr:nth-child(even) td{background:#EFEADC;}
+  table.rps tr.uas td{background:#F3E4DC;}
+  table.rps ul{margin:0;padding-left:16px;}
+  table.rps li{margin-bottom:4px;}
+  table.rps .colnum{font-family:"IBM Plex Mono",monospace;color:var(--kraft);font-weight:500;}
+  table.rps .coltopik{font-weight:600;color:var(--navy-deep);margin-bottom:6px;display:block;font-size:13.5px;}
+  table.rps .colbobot{font-family:"IBM Plex Mono",monospace;font-weight:600;}
+
+  /* penilaian */
+  table.penilaian{width:100%;max-width:640px;border-collapse:collapse;margin-top:8px;}
+  table.penilaian th{
+    text-align:left;background:var(--navy-deep);color:#F2EEE3;
+    font-weight:500;font-size:13px;padding:10px 14px;
+  }
+  table.penilaian td{padding:12px 14px;border-top:1px solid var(--line);font-size:15px;}
+  table.penilaian td:last-child{font-weight:600;color:var(--kraft);width:80px;}
+  .uas-note{max-width:72ch;font-size:14.5px;color:var(--ink-soft);margin-top:16px;font-style:italic;}
+
+  /* referensi */
+  .ref-list{margin:0;padding-left:20px;max-width:68ch;color:var(--ink-soft);font-size:15px;}
+  .ref-list li{margin-bottom:8px;}
+
+  /* sesi index */
+  .session-list{list-style:none;margin:24px 0 0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  .session{border:1px solid var(--line-strong);border-radius:4px;background:var(--paper-raised);}
+  .session-link{
+    display:flex;align-items:center;gap:20px;
+    padding:18px 20px;
+    text-decoration:none;
+  }
+  .session-num{
+    font-family:"Fraunces",serif;font-weight:600;font-size:26px;
+    color:var(--navy-deep);
+    flex:0 0 46px;
+  }
+  .session-body{flex:1;min-width:0;}
+  .session-body h3{font-size:17px;color:var(--ink);font-weight:600;font-family:"IBM Plex Sans";}
+  .session-body p{margin:4px 0 0;font-size:14px;color:var(--ink-soft);}
+  .session-meta{display:flex;align-items:center;gap:10px;flex:0 0 auto;}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:#B8AE92;}
+  .session[data-status="active"] .status-dot{background:var(--sage);}
+  .cta{
+    font-size:13px;font-weight:600;
+    padding:8px 14px;border-radius:3px;
+    border:1px solid var(--line-strong);
+    white-space:nowrap;
+  }
+  .cta-active{display:none;background:var(--navy-deep);color:#F2EEE3;border-color:var(--navy-deep);}
+  .cta-locked{display:inline-block;color:var(--ink-soft);background:transparent;}
+  .session[data-status="active"] .cta-active{display:inline-block;}
+  .session[data-status="active"] .cta-locked{display:none;}
+  .session[data-status="locked"] .session-link{cursor:default;pointer-events:none;}
+  .session[data-status="locked"] .session-num,
+  .session[data-status="locked"] .session-body h3{color:var(--ink-soft);}
+  .session.uas{border-color:var(--stamp);}
+  .session.uas .session-num{color:var(--stamp);}
+
+  footer{padding:40px 0 60px;text-align:center;color:var(--ink-soft);font-size:13.5px;}
+
+  @media (max-width:640px){
+    .cover-meta div{border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,.18);padding-top:14px;}
+    .cover-meta div:first-child{border-top:none;}
+    .session-link{flex-wrap:wrap;}
+    .session-num{flex:0 0 auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap cover-inner">
+    <div class="eyebrow-row">
+      <span class="course-code">MDD · Praktik</span>
+      <span class="doc-type">Rencana Pembelajaran Semester</span>
+    </div>
+    <h1>Manajemen Dokumen Digital</h1>
+    <p class="cover-sub">Mengelola dokumen digital secara sistematis sepanjang siklus hidupnya — dari penerimaan hingga pemusnahan — dilanjutkan dengan otomasi menggunakan Google Apps Script.</p>
+    <div class="cover-meta">
+      <div><div class="label">Dosen Pengampu</div><div class="value">Philipus Suryo Subandoro</div></div>
+      <div><div class="label">Bobot SKS</div><div class="value">3 SKS Praktik</div></div>
+      <div><div class="label">Pertemuan</div><div class="value">7 sesi + 1 UAS</div></div>
+      <div><div class="label">Bentuk UAS</div><div class="value">Demo &amp; Presentasi Proyek</div></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#deskripsi">Deskripsi</a>
+    <a href="#cpmk">CPMK</a>
+    <a href="#jadwal">Jadwal Pembelajaran</a>
+    <a href="#penilaian">Penilaian</a>
+    <a href="#referensi">Referensi</a>
+    <a href="#sesi">Sesi Pembelajaran</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="deskripsi">
+    <div class="section-head"><span class="section-num">A</span><h2>Deskripsi Mata Kuliah</h2></div>
+    <p class="desc-text">Mata kuliah Manajemen Dokumen Digital merupakan mata kuliah praktik yang membekali mahasiswa dengan kemampuan mengelola dokumen digital secara sistematis sepanjang siklus hidupnya, mulai dari pembuatan atau penerimaan, pencatatan, klasifikasi, pemberian metadata, penamaan, penyimpanan, pencarian, distribusi dan pengamanan, pemeliharaan, retensi, hingga pemusnahan. Pembelajaran menggunakan aplikasi perkantoran dan platform digital yang relevan serta dilanjutkan dengan pengenalan otomatisasi proses pengelolaan dokumen menggunakan Google Apps Script.</p>
+    <table class="id-table">
+      <tr><td>Kode Mata Kuliah</td><td>(disesuaikan dengan kurikulum program studi)</td></tr>
+      <tr><td>Semester</td><td>(disesuaikan)</td></tr>
+      <tr><td>Prasyarat</td><td>Dasar-dasar Google Apps Script telah diajarkan sebelumnya</td></tr>
+    </table>
+  </section>
+
+  <section id="cpmk">
+    <div class="section-head"><span class="section-num">B</span><h2>Capaian Pembelajaran Mata Kuliah</h2></div>
+    <ol class="cpmk-list">
+      <li>Mahasiswa mampu menjelaskan konsep dan tahapan siklus hidup dokumen digital secara sistematis.</li>
+      <li>Mahasiswa mampu menerapkan aplikasi perkantoran dan platform digital untuk mengelola dokumen pada setiap tahap siklus hidupnya.</li>
+      <li>Mahasiswa mampu merancang skema klasifikasi, metadata, penamaan, dan struktur penyimpanan dokumen digital yang sistematis.</li>
+      <li>Mahasiswa mampu menerapkan prinsip distribusi, pengamanan, pemeliharaan, retensi, dan pemusnahan dokumen sesuai kaidah kearsipan.</li>
+      <li>Mahasiswa mampu merancang dan mengimplementasikan otomasi pengelolaan dokumen digital menggunakan Google Apps Script (GAS).</li>
+      <li>Mahasiswa mampu mengintegrasikan seluruh tahap siklus hidup dokumen ke dalam satu sistem manajemen dokumen digital yang terotomasi.</li>
+    </ol>
+  </section>
+
+  <section id="jadwal">
+    <div class="section-head"><span class="section-num">C</span><h2>Rencana Pembelajaran Mingguan</h2></div>
+    <p class="lede">Tujuh pertemuan memetakan satu tahap siklus dokumen ke satu kemampuan otomasi GAS, diakhiri UAS berupa demo sistem terintegrasi.</p>
+
+    <div class="table-scroll">
+      <table class="rps">
+        <thead>
+          <tr>
+            <th style="width:36px;">Mgg</th>
+            <th style="width:17%;">Sub-CPMK</th>
+            <th style="width:27%;">Materi Pembelajaran</th>
+            <th style="width:12%;">Metode</th>
+            <th style="width:20%;">Indikator Penilaian</th>
+            <th style="width:48px;">Bobot</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="colnum">1</td>
+            <td>Mereview konsep dasar GAS dan memetakan otomasi pada tiap tahap siklus dokumen.</td>
+            <td><span class="coltopik">Review GAS &amp; Pemetaan Siklus Dokumen</span>
+              <ul><li>Sintaks dasar GAS: variabel, fungsi, trigger</li><li>Pemetaan GAS ↔ siklus hidup dokumen</li><li>Pengenalan proyek akhir &amp; pemilihan studi kasus</li></ul>
+            </td>
+            <td>Ceramah interaktif, live coding review, diskusi kelompok</td>
+            <td>Ketepatan pemetaan siklus-GAS; kejelasan proposal studi kasus</td>
+            <td class="colbobot">5%</td>
+          </tr>
+          <tr>
+            <td class="colnum">2</td>
+            <td>Membangun sistem penerimaan dokumen &amp; pencatatan (buku agenda digital) otomatis.</td>
+            <td><span class="coltopik">Otomasi Penerimaan &amp; Pencatatan</span>
+              <ul><li>FormApp &amp; DriveApp dasar</li><li>Trigger onFormSubmit</li><li>SpreadsheetApp untuk log agenda otomatis</li></ul>
+            </td>
+            <td>Praktikum lab, tutorial berpasangan</td>
+            <td>Alur form→Drive→Sheets berjalan; data agenda lengkap</td>
+            <td class="colbobot">10%</td>
+          </tr>
+          <tr>
+            <td class="colnum">3</td>
+            <td>Merancang skema klasifikasi arsip dan metadata dokumen otomatis.</td>
+            <td><span class="coltopik">Klasifikasi &amp; Metadata Otomatis</span>
+              <ul><li>Skema &amp; kode klasifikasi arsip</li><li>File.setDescription(), PropertiesService</li><li>Auto-classify ke subfolder kategori</li></ul>
+            </td>
+            <td>Praktikum lab, studi kasus</td>
+            <td>Skema klasifikasi logis; metadata &amp; folder tepat</td>
+            <td class="colbobot">10%</td>
+          </tr>
+          <tr>
+            <td class="colnum">4</td>
+            <td>Menerapkan konvensi penamaan file dan struktur penyimpanan otomatis.</td>
+            <td><span class="coltopik">Penamaan &amp; Struktur Penyimpanan</span>
+              <ul><li>Konvensi [Unit]_[JenisDok]_[Tanggal]_[NomorUrut]</li><li>file.setName()</li><li>DriveApp.createFolder() terprogram</li></ul>
+            </td>
+            <td>Praktikum lab, live coding</td>
+            <td>Penamaan konsisten; struktur folder sesuai skema</td>
+            <td class="colbobot">10%</td>
+          </tr>
+          <tr>
+            <td class="colnum">5</td>
+            <td>Membangun antarmuka pencarian dokumen berbasis Web App.</td>
+            <td><span class="coltopik">Pencarian &amp; Dashboard Web App</span>
+              <ul><li>DriveApp.searchFiles()</li><li>doGet()/doPost(), HTML Service</li><li>Deployment Web App</li></ul>
+            </td>
+            <td>Praktikum lab, live coding</td>
+            <td>Web App ter-deploy; pencarian sesuai metadata</td>
+            <td class="colbobot">10%</td>
+          </tr>
+          <tr>
+            <td class="colnum">6</td>
+            <td>Menerapkan kontrol akses, distribusi otomatis, dan keamanan dasar dokumen.</td>
+            <td><span class="coltopik">Distribusi &amp; Pengamanan Dokumen</span>
+              <ul><li>file.setSharing() &amp; tingkat izin</li><li>GmailApp.sendEmail() untuk notifikasi</li><li>Expiry akses &amp; audit trail</li></ul>
+            </td>
+            <td>Praktikum lab, simulasi kasus</td>
+            <td>Sharing sesuai peran; notifikasi &amp; log akses tercatat</td>
+            <td class="colbobot">10%</td>
+          </tr>
+          <tr>
+            <td class="colnum">7</td>
+            <td>Merancang sistem retensi &amp; pemusnahan dokumen otomatis sesuai JRA.</td>
+            <td><span class="coltopik">Retensi, Pemusnahan &amp; Integrasi Akhir</span>
+              <ul><li>Time-driven trigger, scan masa retensi</li><li>Laporan usulan pemusnahan &amp; alur approval</li><li>file.setTrashed(); integrasi seluruh modul</li></ul>
+            </td>
+            <td>Praktikum lab, diskusi etika kearsipan</td>
+            <td>Retensi sesuai JRA; seluruh modul terintegrasi end-to-end</td>
+            <td class="colbobot">15%</td>
+          </tr>
+          <tr class="uas">
+            <td class="colnum">8</td>
+            <td>Mendemonstrasikan sistem manajemen dokumen digital terintegrasi penuh.</td>
+            <td><span class="coltopik">UAS — Demo &amp; Presentasi Proyek Akhir</span>
+              <ul><li>Demo langsung sistem (Web App/aplikasi)</li><li>Presentasi arsitektur &amp; alur otomasi</li><li>Tanya jawab + penyerahan dokumentasi teknis</li></ul>
+            </td>
+            <td>Demo produk, presentasi kelompok, tanya jawab</td>
+            <td>Integrasi lengkap; fungsionalitas, kualitas UI, penguasaan materi</td>
+            <td class="colbobot">30%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="penilaian">
+    <div class="section-head"><span class="section-num">D</span><h2>Komponen Penilaian</h2></div>
+    <table class="penilaian">
+      <thead><tr><th>Komponen</th><th>Bobot</th></tr></thead>
+      <tbody>
+        <tr><td>Tugas Praktikum Mingguan (Pertemuan 1–7)</td><td>70%</td></tr>
+        <tr><td>UAS — Demo &amp; Presentasi Proyek Akhir</td><td>30%</td></tr>
+      </tbody>
+    </table>
+    <p class="uas-note">UAS dilaksanakan sebagai demo dan presentasi proyek akhir kelompok: sistem manajemen dokumen digital yang mengintegrasikan seluruh tahap siklus hidup dokumen dengan otomasi Google Apps Script. Setiap kelompok menyerahkan source code dan laporan teknis singkat.</p>
+  </section>
+
+  <section id="referensi">
+    <div class="section-head"><span class="section-num">E</span><h2>Daftar Referensi</h2></div>
+    <ul class="ref-list">
+      <li>Read, J., &amp; Ginn, M. L. <em>Records Management</em> (edisi terbaru).</li>
+      <li>Dokumentasi resmi Google Apps Script — developers.google.com/apps-script</li>
+      <li>Dokumentasi Google Workspace (Drive, Sheets, Gmail, Forms) — support.google.com</li>
+      <li>Peraturan/Pedoman Kearsipan (mis. ANRI) mengenai Jadwal Retensi Arsip (JRA).</li>
+    </ul>
+  </section>
+
+  <section id="sesi">
+    <div class="section-head"><span class="section-num">F</span><h2>Sesi Pembelajaran</h2></div>
+    <p class="lede">Tautan menuju materi tiap pertemuan. Sesi akan aktif satu per satu seiring perkuliahan berjalan — ubah <code>data-status</code> dari <code>locked</code> menjadi <code>active</code> pada berkas ini untuk membukanya.</p>
+
+    <ul class="session-list">
+      <li class="session" data-status="locked">
+        <a class="session-link" href="sesi01.html">
+          <span class="session-num">01</span>
+          <span class="session-body"><h3>Review GAS &amp; Pemetaan Siklus Dokumen</h3><p>Dasar GAS, pemetaan otomasi, pemilihan studi kasus proyek</p></span>
+          <span class="session-meta"><span class="status-dot"></span><span class="cta cta-locked">Segera tersedia</span><span class="cta cta-active">Buka sesi</span></span>
+        </a>
+      </li>
+      <li class="session" data-status="locked">
+        <a class="session-link" href="sesi02.html">
+          <span class="session-num">02</span>
+          <span class="session-body"><h3>Otomasi Penerimaan &amp; Pencatatan</h3><p>Google Form, Drive, trigger onFormSubmit, log agenda otomatis</p></span>
+          <span class="session-meta"><span class="status-dot"></span><span class="cta cta-locked">Segera tersedia</span><span class="cta cta-active">Buka sesi</span></span>
+        </a>
+      </li>
+      <li class="session" data-status="locked">
+        <a class="session-link" href="sesi03.html">
+          <span class="session-num">03</span>
+          <span class="session-body"><h3>Klasifikasi &amp; Metadata Otomatis</h3><p>Skema klasifikasi arsip, metadata, pemindahan file otomatis</p></span>
+          <span class="session-meta"><span class="status-dot"></span><span class="cta cta-locked">Segera tersedia</span><span class="cta cta-active">Buka sesi</span></span>
+        </a>
+      </li>
+      <li class="session" data-status="locked">
+        <a class="session-link" href="sesi04.html">
+          <span class="session-num">04</span>
+          <span class="session-body"><h3>Penamaan &amp; Struktur Penyimpanan</h3><p>Konvensi penamaan file, struktur folder arsip terprogram</p></span>
+          <span class="session-meta"><span class="status-dot"></span><span class="cta cta-locked">Segera tersedia</span><span class="cta cta-active">Buka sesi</span></span>
+        </a>
+      </li>
+      <li class="session" data-status="locked">
+        <a class="session-link" href="sesi05.html">
+          <span class="session-num">05</span>
+          <span class="session-body"><h3>Pencarian &amp; Dashboard Web App</h3><p>DriveApp.searchFiles(), doGet/doPost, deployment Web App</p></span>
+          <span class="session-meta"><span class="status-dot"></span><span class="cta cta-locked">Segera tersedia</span><span class="cta cta-active">Buka sesi</span></span>
+        </a>
+      </li>
+      <li class="session" data-status="locked">
+        <a class="session-link" href="sesi06.html">
+          <span class="session-num">06</span>
+          <span class="session-body"><h3>Distribusi &amp; Pengamanan Dokumen</h3><p>Sharing, notifikasi email, expiry akses, audit trail</p></span>
+          <span class="session-meta"><span class="status-dot"></span><span class="cta cta-locked">Segera tersedia</span><span class="cta cta-active">Buka sesi</span></span>
+        </a>
+      </li>
+      <li class="session" data-status="locked">
+        <a class="session-link" href="sesi07.html">
+          <span class="session-num">07</span>
+          <span class="session-body"><h3>Retensi, Pemusnahan &amp; Integrasi Akhir</h3><p>Trigger terjadwal, laporan pemusnahan, integrasi seluruh modul</p></span>
+          <span class="session-meta"><span class="status-dot"></span><span class="cta cta-locked">Segera tersedia</span><span class="cta cta-active">Buka sesi</span></span>
+        </a>
+      </li>
+      <li class="session uas" data-status="locked">
+        <a class="session-link" href="sesi08.html">
+          <span class="session-num">08</span>
+          <span class="session-body"><h3>UAS — Demo &amp; Presentasi Proyek Akhir</h3><p>Demo sistem terintegrasi, presentasi, tanya jawab</p></span>
+          <span class="session-meta"><span class="status-dot"></span><span class="cta cta-locked">Segera tersedia</span><span class="cta cta-active">Buka sesi</span></span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>Manajemen Dokumen Digital — Philipus Suryo Subandoro</footer>
+
+</body>
+</html>
