@@ -95,7 +95,7 @@
 
   <section id="tujuan">
     <div class="section-head"><span class="section-num">A</span><h2>Tujuan Pembelajaran</h2></div>
-    <p class="lede">Setelah sesi ini, mahasiswa mampu mereview konsep dasar GAS dan memetakan otomasi pada tiap tahap siklus dokumen.</p>
+    <p class="lede">Setelah sesi ini, Anda mampu mereview konsep dasar GAS dan memetakan otomasi pada tiap tahap siklus dokumen.</p>
     <ol class="plain">
       <li>Menulis fungsi GAS sederhana dengan variabel, fungsi, dan trigger.</li>
       <li>Menjelaskan tahap siklus hidup dokumen digital dan layanan GAS yang mengotomasinya.</li>
@@ -107,11 +107,11 @@
   <section id="alur">
     <div class="section-head"><span class="section-num">B</span><h2>Alur Kegiatan</h2></div>
     <ol class="flow">
-      <li><span class="no">1</span><div><strong>Pembukaan &amp; apersepsi</strong><span class="d">Tanya jawab: dokumen apa yang pernah hilang atau salah nama di kantor/kampus? Pengantar kontrak kuliah dan alur 7 sesi.</span></div></li>
-      <li><span class="no">2</span><div><strong>Review dasar GAS (live coding)</strong><span class="d">Variabel, kondisi, perulangan, fungsi, dan trigger. Dosen mengetik, mahasiswa mengikuti di editor masing-masing.</span></div></li>
-      <li><span class="no">3</span><div><strong>Pemetaan GAS ↔ siklus hidup dokumen</strong><span class="d">Mahasiswa melengkapi tabel pemetaan, lalu dibahas bersama.</span></div></li>
-      <li><span class="no">4</span><div><strong>Pengenalan proyek akhir &amp; pemilihan studi kasus</strong><span class="d">Kelompok memilih organisasi/unit dan jenis dokumen, lalu menyusun proposal singkat.</span></div></li>
-      <li><span class="no">5</span><div><strong>Penutup</strong><span class="d">Presentasi kilat tiap kelompok, umpan balik, dan pengumuman tugas.</span></div></li>
+      <li><span class="no">1</span><div><strong>Pembukaan &amp; apersepsi</strong><span class="d">Pengantar mata kuliah dan alur 7 sesi. Renungkan: dokumen apa yang pernah hilang atau salah nama di kantor atau kampus Anda?</span></div></li>
+      <li><span class="no">2</span><div><strong>Review dasar GAS (live coding)</strong><span class="d">Variabel, kondisi, perulangan, fungsi, dan trigger. Ikuti contoh kode langkah demi langkah di editor Anda sendiri.</span></div></li>
+      <li><span class="no">3</span><div><strong>Pemetaan GAS ↔ siklus hidup dokumen</strong><span class="d">Lengkapi tabel pemetaan bersama kelompok, lalu bahas bersama seluruh kelas.</span></div></li>
+      <li><span class="no">4</span><div><strong>Pengenalan proyek akhir &amp; pemilihan studi kasus</strong><span class="d">Kelompok Anda memilih organisasi atau unit dan jenis dokumen, lalu menyusun proposal singkat.</span></div></li>
+      <li><span class="no">5</span><div><strong>Penutup</strong><span class="d">Presentasi kilat tiap kelompok, umpan balik, dan penjelasan tugas.</span></div></li>
     </ol>
   </section>
 
@@ -120,6 +120,28 @@
 
     <h3>1. Sintaks dasar GAS</h3>
     <p>GAS memakai JavaScript, ditambah layanan bawaan Google (DriveApp, SpreadsheetApp, GmailApp, dan lainnya). Buka <code>script.google.com</code>, buat proyek baru, lalu coba setiap contoh di bawah. Lihat hasilnya di <b>Log eksekusi</b>. Berikut sintaks yang paling sering dipakai sepanjang mata kuliah ini.</p>
+
+    <h4>Peta analogi: dari dunia kearsipan ke kode</h4>
+    <p>Semua konsep di bawah sebenarnya sudah akrab bagi Anda di bidang administrasi perkantoran. Gunakan tabel ini sebagai jembatan sebelum masuk ke sintaksnya.</p>
+    <div class="table-scroll">
+      <table style="min-width:640px">
+        <thead><tr><th>Konsep GAS</th><th>Padanan di kearsipan</th><th>Contoh</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">variabel</td><td>Laci atau map yang diberi label dan bisa diisi dokumen</td><td class="mono">let jumlah = 12</td></tr>
+          <tr><td class="mono">array</td><td>Daftar baris pada buku agenda</td><td class="mono">["SM-001", "SM-002"]</td></tr>
+          <tr><td class="mono">objek</td><td>Kartu kendali atau formulir dengan kolom nomor, judul, tahun</td><td class="mono">{ nomor: "001", tahun: 2026 }</td></tr>
+          <tr><td class="mono">if / else</td><td>Aturan disposisi: jika surat penting, teruskan ke pimpinan; jika tidak, arsipkan</td><td class="mono">if (penting) {...}</td></tr>
+          <tr><td class="mono">perulangan</td><td>Menstempel 100 surat satu per satu dengan cara yang sama</td><td class="mono">for / forEach / while</td></tr>
+          <tr><td class="mono">function</td><td>SOP yang ditulis sekali dan dipakai berulang</td><td class="mono">function arsipkan() {...}</td></tr>
+          <tr><td class="mono">parameter &amp; return</td><td>Bahan yang diserahkan ke SOP, dan hasil yang dikembalikan</td><td class="mono">function beriNama(unit) { return ... }</td></tr>
+          <tr><td class="mono">trigger</td><td>Alarm pengingat atau disposisi otomatis yang berjalan tanpa diminta</td><td class="mono">ScriptApp.newTrigger()</td></tr>
+          <tr><td class="mono">try / catch</td><td>Prosedur bila surat yang dicari tidak ditemukan di lemari arsip</td><td class="mono">try {...} catch (e) {...}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Mulai dengan satu keberhasilan kecil</h4>
+    <p>Sebelum membaca sintaks satu per satu, jalankan fungsi <code>latihan1()</code> pada bagian f dan lihat hasilnya di log. Begitu satu hal berhasil berjalan, kode terasa tidak semenakutkan yang dibayangkan. Ingat juga bahwa error itu hal biasa, bahkan programmer profesional mengalaminya setiap hari. Baca pesan galatnya pelan-pelan, karena biasanya menyebut baris dan penyebab masalahnya.</p>
 
     <h4>a. Variabel: <code>const</code> dan <code>let</code></h4>
     <p>Variabel menyimpan nilai agar bisa dipakai ulang. Gunakan <code>const</code> untuk nilai yang tidak berubah dan <code>let</code> untuk nilai yang akan diubah. Hindari <code>var</code>, karena cakupannya lebih membingungkan.</p>
@@ -292,7 +314,7 @@ function cekTrigger() {
     </ol>
 
     <h3>Rubrik penilaian</h3>
-    <p>Sesuai indikator RPS: ketepatan pemetaan siklus–GAS dan kejelasan proposal studi kasus. Pembagian skor di bawah ini usulan.</p>
+    <p>Penilaian mengacu pada indikator RPS: ketepatan pemetaan siklus–GAS dan kejelasan proposal studi kasus.</p>
     <div class="table-scroll">
       <table style="min-width:560px">
         <thead><tr><th>Indikator</th><th>Kriteria</th><th>Skor</th></tr></thead>
