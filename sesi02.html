@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sesi 2 — Otomasi Penerimaan &amp; Pencatatan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EEE3; --paper-raised:#FAF8F2; --ink:#22262B; --ink-soft:#585B52;
+    --navy:#1E3A52; --navy-deep:#13293D; --kraft:#9C6B30; --stamp:#A6402B; --sage:#4E6F5C;
+    --line:#D9D2C0; --line-strong:#C3B99E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;}
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:600;color:var(--navy-deep);margin:0;}
+  a{color:var(--navy);}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+  header.cover{background:var(--navy-deep);color:var(--paper-raised);padding:48px 0 40px;position:relative;overflow:hidden;}
+  header.cover::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,.035) 0 1px,transparent 1px 28px);pointer-events:none;}
+  .cover-inner{position:relative;}
+  .back{display:inline-block;font-size:14px;color:#9FB3C2;text-decoration:none;margin-bottom:22px;}
+  .back:hover{color:#fff;}
+  .eyebrow-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+  .course-code{font-family:"IBM Plex Mono",monospace;font-size:13px;color:#C9B98C;border:1px solid rgba(201,185,140,.45);border-radius:3px;padding:3px 9px;}
+  .doc-type{font-size:14px;color:#9FB3C2;}
+  header.cover h1{font-size:clamp(30px,4.6vw,46px);line-height:1.1;max-width:20ch;color:#fff;}
+  .cover-sub{margin-top:14px;font-size:17px;color:#C7D3DA;max-width:56ch;}
+  .cover-meta{margin-top:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:1px solid rgba(255,255,255,.18);}
+  .cover-meta div{padding:14px 20px 0;border-left:1px solid rgba(255,255,255,.18);}
+  .cover-meta div:first-child{border-left:none;padding-left:0;}
+  .cover-meta .label{font-size:12px;color:#8EA2B1;margin-bottom:2px;}
+  .cover-meta .value{font-size:15px;color:#F2EEE3;font-weight:500;}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
+  .section-num{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--kraft);}
+  section h2{font-size:26px;}
+  section h3{font-size:19px;margin:28px 0 8px;}
+  p{max-width:72ch;margin:0 0 12px;}
+  .lede{color:var(--ink-soft);font-size:17px;}
+  ul.plain,ol.plain{max-width:72ch;padding-left:20px;margin:0 0 12px;}
+  ul.plain li,ol.plain li{margin-bottom:6px;}
+
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:4px;margin:8px 0 16px;}
+  table{width:100%;border-collapse:collapse;background:var(--paper-raised);min-width:640px;}
+  th{background:var(--navy-deep);color:#F2EEE3;font-weight:500;font-size:13px;text-align:left;padding:10px 14px;}
+  td{padding:12px 14px;border-top:1px solid var(--line);font-size:14.5px;vertical-align:top;}
+  tr:nth-child(even) td{background:#EFEADC;}
+  td.mono,td code{font-family:"IBM Plex Mono",monospace;font-size:13px;}
+  td.score{font-weight:600;color:var(--kraft);white-space:nowrap;}
+
+  pre{background:var(--navy-deep);color:#E6EDF1;border-radius:4px;padding:16px 18px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;margin:8px 0 16px;max-width:760px;}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:#E7E1CF;padding:1px 5px;border-radius:3px;}
+  pre code{background:none;padding:0;font-size:inherit;}
+  .cm{color:#8EA2B1;}
+
+  .flow{list-style:none;margin:0;padding:0;max-width:820px;border:1px solid var(--line-strong);border-radius:4px;background:var(--paper-raised);}
+  .flow li{display:flex;gap:18px;padding:16px 20px;border-top:1px solid var(--line);}
+  .flow li:first-child{border-top:none;}
+  .flow .no{flex:0 0 28px;font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:22px;line-height:1.2;color:var(--kraft);}
+  .flow strong{display:block;color:var(--navy-deep);}
+  .flow span.d{font-size:14.5px;color:var(--ink-soft);}
+
+  h4{font-family:"IBM Plex Sans",sans-serif;font-size:16px;font-weight:600;color:var(--navy-deep);margin:22px 0 6px;}
+  h4 code{font-size:.9em;}
+  .box{max-width:72ch;border-left:3px solid var(--stamp);background:var(--paper-raised);padding:14px 18px;margin:16px 0;font-size:15px;}
+  .box strong{color:var(--stamp);}
+  footer{padding:36px 0 56px;text-align:center;color:var(--ink-soft);font-size:13.5px;}
+  footer a{margin:0 10px;}
+
+  .sistem{display:flex;flex-wrap:wrap;align-items:stretch;max-width:900px;margin:12px 0 20px;}
+  .sistem .node{flex:1 1 150px;background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:4px;padding:12px 14px;}
+  .sistem .node b{display:block;font-family:"Fraunces",Georgia,serif;color:var(--navy-deep);font-size:16px;margin-bottom:2px;}
+  .sistem .node span{font-size:13.5px;color:var(--ink-soft);}
+  .sistem .panah{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:var(--kraft);font-size:20px;}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap cover-inner">
+    <a class="back" href="index.html">← Kembali ke RPS</a>
+    <div class="eyebrow-row">
+      <span class="course-code">MDD · Sesi 2</span>
+      <span class="doc-type">Pertemuan Minggu 2</span>
+    </div>
+    <h1>Otomasi Penerimaan &amp; Pencatatan</h1>
+    <p class="cover-sub">Membangun alur otomatis dari Google Form ke Drive dan Sheets: dokumen masuk, tersimpan di folder yang tepat, dan tercatat di buku agenda digital tanpa diketik ulang.</p>
+    <div class="cover-meta">
+      <div><div class="label">Metode</div><div class="value">Praktikum lab, tutorial berpasangan</div></div>
+      <div><div class="label">Bobot tugas</div><div class="value">10%</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="tujuan">
+    <div class="section-head"><span class="section-num">A</span><h2>Tujuan Pembelajaran</h2></div>
+    <p class="lede">Setelah sesi ini, Anda mampu membangun sistem penerimaan dokumen dan buku agenda digital yang berjalan otomatis.</p>
+    <ol class="plain">
+      <li>Menjelaskan alur otomasi penerimaan dokumen: Form, trigger, skrip, Drive, dan Sheets.</li>
+      <li>Membuat trigger <code>onFormSubmit</code> yang menjalankan skrip setiap kali Form dikirim.</li>
+      <li>Menulis skrip yang memindahkan file ke folder arsip dan mencatat agenda surat secara otomatis.</li>
+      <li>Menyesuaikan alur tersebut dengan studi kasus kelompok Anda.</li>
+    </ol>
+    <p><strong>Prasyarat:</strong> akun Google aktif, dasar GAS dari sesi 1 (variabel, fungsi, trigger), dan studi kasus yang sudah dipilih kelompok.</p>
+  </section>
+
+  <section id="alur">
+    <div class="section-head"><span class="section-num">B</span><h2>Alur Kegiatan</h2></div>
+    <ol class="flow">
+      <li><span class="no">1</span><div><strong>Pembukaan &amp; review sesi 1</strong><span class="d">Ingat kembali variabel, fungsi, dan trigger. Lihat peta alur sistem yang akan dibangun hari ini.</span></div></li>
+      <li><span class="no">2</span><div><strong>Konsep FormApp, DriveApp, SpreadsheetApp, dan event object</strong><span class="d">Memahami peran tiap layanan dan data yang dibawa trigger saat Form dikirim.</span></div></li>
+      <li><span class="no">3</span><div><strong>Praktikum berpasangan: membangun alur Form → Drive → Sheets</strong><span class="d">Satu orang menulis kode, satu orang membaca dan memeriksa, lalu bergantian.</span></div></li>
+      <li><span class="no">4</span><div><strong>Uji coba &amp; debugging</strong><span class="d">Mengirim Form, memeriksa hasil di Drive dan Sheets, serta memperbaiki error dengan tabel pemecahan masalah.</span></div></li>
+      <li><span class="no">5</span><div><strong>Adaptasi ke studi kasus &amp; penutup</strong><span class="d">Menyesuaikan kolom dan folder dengan jenis dokumen kelompok Anda, lalu berbagi hasil dan kendala.</span></div></li>
+    </ol>
+  </section>
+
+  <section id="materi">
+    <div class="section-head"><span class="section-num">C</span><h2>Materi Pembelajaran</h2></div>
+
+    <h3>1. Peta alur sistem</h3>
+    <p>Tujuan hari ini: sekali seseorang mengirim Form, tiga hal terjadi sendiri tanpa ada yang mengetik ulang.</p>
+    <div class="sistem">
+      <div class="node"><b>Google Form</b><span>Pengirim mengisi data surat dan mengunggah file</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Trigger</b><span>onFormSubmit menyala saat Form dikirim</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Skrip GAS</b><span>Membaca jawaban, mengolah, lalu memerintah layanan lain</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Drive &amp; Sheets</b><span>File masuk folder arsip, data tercatat di buku agenda</span></div>
+    </div>
+
+    <h4>Peta analogi kearsipan</h4>
+    <div class="table-scroll">
+      <table style="min-width:560px">
+        <thead><tr><th>Komponen digital</th><th>Padanan di kantor</th></tr></thead>
+        <tbody>
+          <tr><td>Google Form</td><td>Lembar penerimaan surat di loket</td></tr>
+          <tr><td>Trigger onFormSubmit</td><td>Petugas yang langsung bertindak begitu surat diserahkan</td></tr>
+          <tr><td>Skrip GAS</td><td>SOP penerimaan surat yang dijalankan petugas</td></tr>
+          <tr><td>Folder Drive</td><td>Lemari arsip surat masuk</td></tr>
+          <tr><td>Spreadsheet</td><td>Buku agenda surat masuk</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>2. Layanan dan sintaks yang dipakai</h3>
+    <div class="table-scroll">
+      <table style="min-width:680px">
+        <thead><tr><th>Layanan</th><th>Metode</th><th>Fungsinya</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">FormApp</td><td class="mono">FormApp.getActiveForm()</td><td>Mengambil Form tempat skrip ini terpasang</td></tr>
+          <tr><td class="mono">FormResponse</td><td class="mono">response.getItemResponses()</td><td>Mengambil semua jawaban dalam satu kiriman Form</td></tr>
+          <tr><td class="mono">ItemResponse</td><td class="mono">getItem().getTitle(), getResponse()</td><td>Judul pertanyaan dan jawaban yang diisi</td></tr>
+          <tr><td class="mono">DriveApp</td><td class="mono">getFileById(id), getFolderById(id)</td><td>Membuka file atau folder berdasarkan ID</td></tr>
+          <tr><td class="mono">File</td><td class="mono">file.moveTo(folder), file.getUrl()</td><td>Memindahkan file dan mengambil tautannya</td></tr>
+          <tr><td class="mono">SpreadsheetApp</td><td class="mono">openById(id), getSheetByName(nama)</td><td>Membuka spreadsheet dan lembar kerja tertentu</td></tr>
+          <tr><td class="mono">Sheet</td><td class="mono">sheet.appendRow([...]), sheet.getLastRow()</td><td>Menambah baris di akhir dan mengetahui jumlah baris terisi</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Event object <code>e</code></h4>
+    <p>Saat trigger menyala, GAS menyerahkan satu objek bernama <code>e</code> ke fungsi Anda. Pada trigger Form, <code>e.response</code> berisi jawaban yang baru dikirim. Objek ini hanya ada ketika trigger yang memanggil fungsi. Jika Anda menekan tombol <b>Run</b>, <code>e</code> bernilai <code>undefined</code> dan muncul error. Jalur uji yang aman disediakan di langkah 6.</p>
+
+    <h4>Pertanyaan unggah file</h4>
+    <p>Jawaban untuk pertanyaan unggah file berupa daftar ID file Drive (array), jadi ID pertama dibaca dengan <code>[0]</code>. Responden harus login ke akun Google untuk mengunggah file, dan file awalnya tersimpan di Drive pemilik Form.</p>
+
+    <h3>3. Praktikum: membangun alur langkah demi langkah</h3>
+
+    <h4>Langkah 1. Siapkan Form</h4>
+    <p>Buat Google Form dengan judul "Penerimaan Surat Masuk" dan pertanyaan berikut. <b>Judul pertanyaan harus persis sama</b> dengan yang dipakai di kode.</p>
+    <div class="table-scroll">
+      <table style="min-width:520px">
+        <thead><tr><th>Judul pertanyaan</th><th>Jenis</th></tr></thead>
+        <tbody>
+          <tr><td>Nomor Surat</td><td>Jawaban singkat</td></tr>
+          <tr><td>Pengirim</td><td>Jawaban singkat</td></tr>
+          <tr><td>Perihal</td><td>Jawaban singkat</td></tr>
+          <tr><td>Jenis Surat</td><td>Pilihan ganda (mis. Undangan, Permohonan, Pemberitahuan, Lainnya)</td></tr>
+          <tr><td>Unggah File Surat</td><td>Upload file (PDF, maksimal 1 file)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Langkah 2. Siapkan buku agenda dan folder arsip</h4>
+    <ol class="plain">
+      <li>Buat Spreadsheet baru bernama "Buku Agenda Surat Masuk". Ubah nama lembar kerja menjadi <code>Agenda</code>.</li>
+      <li>Isi baris pertama sebagai judul kolom: <code>No. Agenda</code>, <code>Tanggal Diterima</code>, <code>Nomor Surat</code>, <code>Pengirim</code>, <code>Perihal</code>, <code>Jenis Surat</code>, <code>Tautan File</code>.</li>
+      <li>Buat folder Drive bernama "Arsip Surat Masuk".</li>
+      <li>Catat dua ID: ID spreadsheet ada di tautan <code>.../d/<b>ID</b>/edit</code>, dan ID folder ada di tautan <code>.../folders/<b>ID</b></code>.</li>
+    </ol>
+
+    <h4>Langkah 3. Buka editor skrip dari Form</h4>
+    <p>Di Form, klik menu titik tiga (<b>⋮</b>) lalu pilih <b>Editor skrip</b> (<i>Script editor</i>). Skrip yang dibuat dari sini terikat pada Form tersebut, sehingga <code>FormApp.getActiveForm()</code> bisa dipakai.</p>
+
+    <h4>Langkah 4. Tulis skrip</h4>
+    <p>Hapus kode bawaan, lalu tempel kode berikut. Ganti kedua ID dengan milik Anda.</p>
+    <pre><code><span class="cm">// Ganti dengan ID milik Anda</span>
+const ID_SPREADSHEET = "ID_SPREADSHEET_AGENDA";
+const ID_FOLDER_ARSIP = "ID_FOLDER_ARSIP";
+
+<span class="cm">// Mengubah jawaban Form menjadi objek: { "Judul Pertanyaan": jawaban }</span>
+function ambilJawaban(response) {
+  const hasil = {};
+  response.getItemResponses().forEach(function (ir) {
+    hasil[ir.getItem().getTitle()] = ir.getResponse();
+  });
+  return hasil;
+}
+
+<span class="cm">// Fungsi utama: dijalankan oleh trigger setiap Form dikirim</span>
+function catatSuratMasuk(e) {
+  const jawaban = ambilJawaban(e.response);
+
+  <span class="cm">// 1. Pindahkan file ke folder arsip</span>
+  const idFile = jawaban["Unggah File Surat"][0];
+  const file = DriveApp.getFileById(idFile);
+  file.moveTo(DriveApp.getFolderById(ID_FOLDER_ARSIP));
+
+  <span class="cm">// 2. Catat ke buku agenda</span>
+  const sheet = SpreadsheetApp.openById(ID_SPREADSHEET).getSheetByName("Agenda");
+  const nomorUrut = sheet.getLastRow();   <span class="cm">// baris 1 = judul kolom, jadi data pertama bernomor 1</span>
+  const nomorAgenda = "SM-" + String(nomorUrut).padStart(3, "0");
+
+  sheet.appendRow([
+    nomorAgenda,
+    new Date(),
+    jawaban["Nomor Surat"],
+    jawaban["Pengirim"],
+    jawaban["Perihal"],
+    jawaban["Jenis Surat"],
+    file.getUrl()
+  ]);
+}</code></pre>
+    <p>Cara kerjanya: <code>ambilJawaban</code> menyusun semua jawaban menjadi objek sehingga Anda bisa memanggilnya dengan judul pertanyaan. Fungsi <code>catatSuratMasuk</code> lalu memindahkan file, menghitung nomor agenda, dan menambahkan satu baris di Sheets.</p>
+
+    <h4>Langkah 5. Pasang trigger</h4>
+    <ol class="plain">
+      <li>Di editor skrip, klik ikon jam <b>Pemicu</b> (<i>Triggers</i>) di sidebar kiri.</li>
+      <li>Klik <b>Tambahkan Pemicu</b> (<i>Add Trigger</i>).</li>
+      <li>Pilih fungsi <code>catatSuratMasuk</code>, sumber acara <b>Dari formulir</b> (<i>From form</i>), dan jenis acara <b>Saat formulir dikirim</b> (<i>On form submit</i>).</li>
+      <li>Simpan. Saat pertama kali, izinkan akses: klik <b>Tinjau izin</b>, pilih akun Anda, lalu setujui. Jika muncul peringatan "aplikasi belum diverifikasi", klik <b>Lanjutan</b> lalu lanjutkan, karena skrip ini milik Anda sendiri.</li>
+    </ol>
+
+    <h4>Langkah 6. Uji coba</h4>
+    <p>Isi dan kirim Form sungguhan satu kali (login akun Google, unggah satu PDF kecil). Lalu periksa: baris baru di Sheets, file pindah ke folder arsip, dan trigger tercatat di <b>Eksekusi</b> (<i>Executions</i>) di sidebar.</p>
+    <p>Untuk menguji ulang tanpa mengisi Form lagi, tambahkan fungsi ini. Ia mengambil jawaban terakhir dan menyerahkannya seperti yang dilakukan trigger:</p>
+    <pre><code>function ujiCoba() {
+  const semua = FormApp.getActiveForm().getResponses();
+  const terakhir = semua[semua.length - 1];
+  catatSuratMasuk({ response: terakhir });
+}</code></pre>
+    <div class="box"><strong>Catatan:</strong> setiap kali <code>ujiCoba</code> dijalankan, satu baris agenda baru ditambahkan lagi. Hapus baris ganda di Sheets setelah pengujian.</div>
+
+    <h3>4. Pemecahan masalah</h3>
+    <div class="table-scroll">
+      <table style="min-width:680px">
+        <thead><tr><th>Gejala</th><th>Penyebab umum</th><th>Perbaikan</th></tr></thead>
+        <tbody>
+          <tr><td>Error <code>Cannot read properties of undefined (reading 'response')</code></td><td>Fungsi dijalankan dengan tombol Run, sehingga <code>e</code> kosong</td><td>Jalankan <code>ujiCoba</code> atau kirim Form sungguhan</td></tr>
+          <tr><td>Error pada <code>jawaban["Unggah File Surat"][0]</code></td><td>Judul pertanyaan tidak persis sama, atau file tidak diunggah</td><td>Samakan judul dengan kode dan pastikan pertanyaan unggah file diisi</td></tr>
+          <tr><td>Error <code>No item with the given ID could be found</code></td><td>ID folder atau spreadsheet salah, atau tidak punya akses</td><td>Salin ulang ID dari tautan dan pastikan Anda pemiliknya</td></tr>
+          <tr><td>Error <code>Cannot read properties of null (reading 'getLastRow')</code></td><td>Nama lembar kerja bukan <code>Agenda</code></td><td>Samakan nama lembar kerja, termasuk huruf besar</td></tr>
+          <tr><td>Form dikirim, tetapi tidak ada yang terjadi</td><td>Trigger belum dibuat atau jenisnya salah</td><td>Cek menu Pemicu, lalu lihat daftar Eksekusi untuk pesan galat</td></tr>
+          <tr><td>Muncul baris agenda ganda</td><td><code>ujiCoba</code> dijalankan berulang</td><td>Hapus baris ganda secara manual</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tugas">
+    <div class="section-head"><span class="section-num">D</span><h2>Tugas Praktikum Sesi 2</h2></div>
+    <p class="lede">Dikerjakan berpasangan, dikumpulkan sebelum sesi 3.</p>
+    <ol class="plain">
+      <li><b>Bangun alur penerimaan untuk studi kasus Anda.</b> Ubah pertanyaan Form, kolom Sheets, nama folder, dan awalan nomor agenda agar sesuai dengan jenis dokumen studi kasus kelompok (misalnya <code>KT-</code> untuk kontrak).</li>
+      <li><b>Uji alurnya</b> dengan minimal tiga kiriman Form yang berbeda dan pastikan semuanya tercatat lengkap.</li>
+      <li><b>Beri komentar</b> pada setiap blok kode dengan bahasa Anda sendiri, yang menjelaskan apa yang dilakukannya.</li>
+      <li><b>Kumpulkan:</b> tautan Form, tautan Spreadsheet buku agenda (akses lihat), tautan proyek skrip, dan tangkapan layar hasil Sheets serta folder Drive.</li>
+    </ol>
+
+    <h3>Rubrik penilaian</h3>
+    <p>Penilaian mengacu pada indikator RPS: alur Form → Drive → Sheets berjalan dan data agenda lengkap.</p>
+    <div class="table-scroll">
+      <table style="min-width:560px">
+        <thead><tr><th>Indikator</th><th>Kriteria</th><th>Skor</th></tr></thead>
+        <tbody>
+          <tr><td>Alur Form → Drive → Sheets berjalan</td><td>Trigger aktif; file pindah ke folder arsip; baris agenda muncul otomatis pada setiap kiriman</td><td class="score">50</td></tr>
+          <tr><td>Kelengkapan data agenda</td><td>Semua kolom terisi benar; nomor agenda berurutan; tautan file bisa dibuka</td><td class="score">30</td></tr>
+          <tr><td>Adaptasi studi kasus &amp; kualitas kode</td><td>Kolom dan folder sesuai studi kasus; kode terbaca dan berkomentar</td><td class="score">20</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="referensi">
+    <div class="section-head"><span class="section-num">E</span><h2>Bahan Bacaan</h2></div>
+    <ul class="plain">
+      <li>Dokumentasi resmi Google Apps Script — developers.google.com/apps-script (bagian Forms Service, Drive Service, Spreadsheet Service, dan Installable Triggers).</li>
+      <li>Dokumentasi Google Workspace — support.google.com (Google Forms, Drive, dan Sheets).</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <a href="sesi01.html">← Sesi 1</a>
+  <a href="index.html">Kembali ke RPS</a>
+  <a href="sesi03.html">Sesi 3 berikutnya →</a>
+  <div style="margin-top:10px;">Manajemen Dokumen Digital — Philipus Suryo Subandoro</div>
+</footer>
+
+</body>
+</html>
