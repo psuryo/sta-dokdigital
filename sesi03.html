@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sesi 3 — Klasifikasi &amp; Metadata Otomatis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EEE3; --paper-raised:#FAF8F2; --ink:#22262B; --ink-soft:#585B52;
+    --navy:#1E3A52; --navy-deep:#13293D; --kraft:#9C6B30; --stamp:#A6402B; --sage:#4E6F5C;
+    --line:#D9D2C0; --line-strong:#C3B99E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;}
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:600;color:var(--navy-deep);margin:0;}
+  a{color:var(--navy);}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+  header.cover{background:var(--navy-deep);color:var(--paper-raised);padding:48px 0 40px;position:relative;overflow:hidden;}
+  header.cover::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,.035) 0 1px,transparent 1px 28px);pointer-events:none;}
+  .cover-inner{position:relative;}
+  .back{display:inline-block;font-size:14px;color:#9FB3C2;text-decoration:none;margin-bottom:22px;}
+  .back:hover{color:#fff;}
+  .eyebrow-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+  .course-code{font-family:"IBM Plex Mono",monospace;font-size:13px;color:#C9B98C;border:1px solid rgba(201,185,140,.45);border-radius:3px;padding:3px 9px;}
+  .doc-type{font-size:14px;color:#9FB3C2;}
+  header.cover h1{font-size:clamp(30px,4.6vw,46px);line-height:1.1;max-width:20ch;color:#fff;}
+  .cover-sub{margin-top:14px;font-size:17px;color:#C7D3DA;max-width:56ch;}
+  .cover-meta{margin-top:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:1px solid rgba(255,255,255,.18);}
+  .cover-meta div{padding:14px 20px 0;border-left:1px solid rgba(255,255,255,.18);}
+  .cover-meta div:first-child{border-left:none;padding-left:0;}
+  .cover-meta .label{font-size:12px;color:#8EA2B1;margin-bottom:2px;}
+  .cover-meta .value{font-size:15px;color:#F2EEE3;font-weight:500;}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
+  .section-num{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--kraft);}
+  section h2{font-size:26px;}
+  section h3{font-size:19px;margin:28px 0 8px;}
+  p{max-width:72ch;margin:0 0 12px;}
+  .lede{color:var(--ink-soft);font-size:17px;}
+  ul.plain,ol.plain{max-width:72ch;padding-left:20px;margin:0 0 12px;}
+  ul.plain li,ol.plain li{margin-bottom:6px;}
+
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:4px;margin:8px 0 16px;}
+  table{width:100%;border-collapse:collapse;background:var(--paper-raised);min-width:640px;}
+  th{background:var(--navy-deep);color:#F2EEE3;font-weight:500;font-size:13px;text-align:left;padding:10px 14px;}
+  td{padding:12px 14px;border-top:1px solid var(--line);font-size:14.5px;vertical-align:top;}
+  tr:nth-child(even) td{background:#EFEADC;}
+  td.mono,td code{font-family:"IBM Plex Mono",monospace;font-size:13px;}
+  td.score{font-weight:600;color:var(--kraft);white-space:nowrap;}
+
+  pre{background:var(--navy-deep);color:#E6EDF1;border-radius:4px;padding:16px 18px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;margin:8px 0 16px;max-width:760px;}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:#E7E1CF;padding:1px 5px;border-radius:3px;}
+  pre code{background:none;padding:0;font-size:inherit;}
+  .cm{color:#8EA2B1;}
+
+  .flow{list-style:none;margin:0;padding:0;max-width:820px;border:1px solid var(--line-strong);border-radius:4px;background:var(--paper-raised);}
+  .flow li{display:flex;gap:18px;padding:16px 20px;border-top:1px solid var(--line);}
+  .flow li:first-child{border-top:none;}
+  .flow .no{flex:0 0 28px;font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:22px;line-height:1.2;color:var(--kraft);}
+  .flow strong{display:block;color:var(--navy-deep);}
+  .flow span.d{font-size:14.5px;color:var(--ink-soft);}
+
+  h4{font-family:"IBM Plex Sans",sans-serif;font-size:16px;font-weight:600;color:var(--navy-deep);margin:22px 0 6px;}
+  h4 code{font-size:.9em;}
+  .box{max-width:72ch;border-left:3px solid var(--stamp);background:var(--paper-raised);padding:14px 18px;margin:16px 0;font-size:15px;}
+  .box strong{color:var(--stamp);}
+  footer{padding:36px 0 56px;text-align:center;color:var(--ink-soft);font-size:13.5px;}
+  footer a{margin:0 10px;}
+
+  .sistem{display:flex;flex-wrap:wrap;align-items:stretch;max-width:900px;margin:12px 0 20px;}
+  .sistem .node{flex:1 1 150px;background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:4px;padding:12px 14px;}
+  .sistem .node b{display:block;font-family:"Fraunces",Georgia,serif;color:var(--navy-deep);font-size:16px;margin-bottom:2px;}
+  .sistem .node span{font-size:13.5px;color:var(--ink-soft);}
+  .sistem .panah{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:var(--kraft);font-size:20px;}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap cover-inner">
+    <a class="back" href="index.html">← Kembali ke RPS</a>
+    <div class="eyebrow-row">
+      <span class="course-code">MDD · Sesi 3</span>
+      <span class="doc-type">Pertemuan Minggu 3</span>
+    </div>
+    <h1>Klasifikasi &amp; Metadata Otomatis</h1>
+    <p class="cover-sub">Merancang skema klasifikasi arsip yang logis, lalu mengotomasinya: setiap dokumen yang masuk diberi kode, deskripsi metadata, dan dipindahkan ke subfolder kategorinya.</p>
+    <div class="cover-meta">
+      <div><div class="label">Metode</div><div class="value">Praktikum lab, studi kasus</div></div>
+      <div><div class="label">Bobot tugas</div><div class="value">10%</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="tujuan">
+    <div class="section-head"><span class="section-num">A</span><h2>Tujuan Pembelajaran</h2></div>
+    <p class="lede">Setelah sesi ini, Anda mampu merancang skema klasifikasi dan metadata, lalu menerapkannya secara otomatis pada alur penerimaan dokumen.</p>
+    <ol class="plain">
+      <li>Menjelaskan prinsip skema klasifikasi arsip yang baik dan jenis-jenis metadata dokumen.</li>
+      <li>Merancang skema dan kode klasifikasi untuk studi kasus kelompok Anda.</li>
+      <li>Memakai <code>File.setDescription()</code> dan <code>PropertiesService</code> untuk menyimpan metadata dan nomor urut.</li>
+      <li>Menulis skrip yang mengklasifikasikan dokumen dan memindahkannya ke subfolder kategori secara otomatis.</li>
+    </ol>
+    <p><strong>Prasyarat:</strong> alur Form → Drive → Sheets dari sesi 2 sudah berjalan, karena sesi ini memperluas skrip tersebut.</p>
+  </section>
+
+  <section id="alur">
+    <div class="section-head"><span class="section-num">B</span><h2>Alur Kegiatan</h2></div>
+    <ol class="flow">
+      <li><span class="no">1</span><div><strong>Pembukaan &amp; review sesi 2</strong><span class="d">Memeriksa hasil tugas sesi 2 dan membahas kendala yang muncul pada alur penerimaan.</span></div></li>
+      <li><span class="no">2</span><div><strong>Konsep klasifikasi dan metadata</strong><span class="d">Prinsip skema klasifikasi, jenis metadata, serta cara kerja <code>setDescription()</code> dan <code>PropertiesService</code>.</span></div></li>
+      <li><span class="no">3</span><div><strong>Studi kasus: merancang skema klasifikasi kelompok</strong><span class="d">Kelompok menyusun kategori, kode, dan contoh dokumen untuk organisasi studi kasusnya, lalu saling mengkritisi skema antarkelompok.</span></div></li>
+      <li><span class="no">4</span><div><strong>Praktikum: memperluas skrip sesi 2</strong><span class="d">Menambahkan kategori di Form, subfolder di Drive, serta kode klasifikasi dan deskripsi otomatis di skrip.</span></div></li>
+      <li><span class="no">5</span><div><strong>Uji coba, progres kelompok &amp; penutup</strong><span class="d">Menguji tiap kategori, memeriksa metadata di Drive, dan memperbarui laporan progres proyek akhir.</span></div></li>
+    </ol>
+  </section>
+
+  <section id="materi">
+    <div class="section-head"><span class="section-num">C</span><h2>Materi Pembelajaran</h2></div>
+
+    <h3>1. Skema dan kode klasifikasi arsip</h3>
+    <p>Klasifikasi adalah pengelompokan dokumen berdasarkan ciri yang sama, umumnya fungsi atau pokok masalahnya, dan setiap kelompok diberi kode. Dengan klasifikasi, dokumen yang berkaitan ditemukan di satu tempat. Di lemari arsip, kode klasifikasi menentukan map mana yang dipakai. Di sistem digital, kode yang sama menentukan subfolder dan nomor arsip.</p>
+
+    <h4>Ciri skema yang baik</h4>
+    <div class="table-scroll">
+      <table style="min-width:640px">
+        <thead><tr><th>Prinsip</th><th>Artinya</th><th>Contoh yang kurang tepat</th></tr></thead>
+        <tbody>
+          <tr><td>Logis</td><td>Dikelompokkan berdasarkan fungsi atau pokok masalah</td><td>Kategori "Surat dari Pak Budi" (berdasarkan nama orang)</td></tr>
+          <tr><td>Saling lepas</td><td>Satu dokumen hanya cocok untuk satu kategori</td><td>Kategori "Penting" dan "Keuangan" yang bisa tumpang tindih</td></tr>
+          <tr><td>Lengkap</td><td>Semua jenis dokumen organisasi tertampung</td><td>Tidak ada kategori untuk dokumen yang sering muncul</td></tr>
+          <tr><td>Sederhana &amp; konsisten</td><td>Mudah dipahami dan dipakai orang lain secara seragam</td><td>Dua puluh kategori dengan istilah yang berubah-ubah</td></tr>
+          <tr><td>Dapat dikembangkan</td><td>Mudah menambah kategori atau subkategori baru</td><td>Kode yang habis dan tidak bisa disisipi</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Contoh skema sederhana</h4>
+    <p>Berikut contoh untuk sebuah sekolah atau kampus. Skema ini hanya contoh latihan. Sesuaikan dengan studi kasus Anda, dan jika organisasinya memiliki pedoman klasifikasi resmi, rujuk pedoman tersebut.</p>
+    <div class="table-scroll">
+      <table style="min-width:640px">
+        <thead><tr><th>Kode</th><th>Kategori</th><th>Contoh dokumen</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">UM</td><td>Umum</td><td>Undangan rapat, surat edaran, pemberitahuan</td></tr>
+          <tr><td class="mono">KP</td><td>Kepegawaian</td><td>Surat tugas, cuti, SK pengangkatan</td></tr>
+          <tr><td class="mono">KU</td><td>Keuangan</td><td>Tagihan, kuitansi, laporan anggaran</td></tr>
+          <tr><td class="mono">AK</td><td>Akademik</td><td>Jadwal kuliah, surat keterangan mahasiswa, berita acara ujian</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>2. Metadata dokumen</h3>
+    <p>Metadata adalah data tentang data: keterangan yang menjelaskan sebuah dokumen tanpa harus membukanya. Seperti label pada map arsip, metadata membuat dokumen mudah dicari dan dipahami konteksnya.</p>
+    <div class="table-scroll">
+      <table style="min-width:640px">
+        <thead><tr><th>Jenis metadata</th><th>Contoh</th><th>Sumbernya</th></tr></thead>
+        <tbody>
+          <tr><td>Deskriptif</td><td>Perihal, pengirim, nomor surat, kategori</td><td>Diisi dari jawaban Form</td></tr>
+          <tr><td>Administratif</td><td>Kode arsip, tanggal diterima, status</td><td>Dibuat oleh skrip Anda</td></tr>
+          <tr><td>Teknis</td><td>Nama file, tipe file, ukuran, tanggal dibuat</td><td>Otomatis dari Drive (<code>getMimeType()</code>, <code>getSize()</code>, <code>getDateCreated()</code>)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>3. Alur otomasi sesi ini</h3>
+    <div class="sistem">
+      <div class="node"><b>Form</b><span>Ditambah pertanyaan "Kategori Surat"</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Skema &amp; kode</b><span>Kategori dipetakan ke kode klasifikasi</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Nomor urut</b><span>Disimpan di PropertiesService per kode</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Drive</b><span>File masuk subfolder kategori, deskripsi metadata diisi</span></div>
+    </div>
+
+    <h4>Sintaks baru yang dipakai</h4>
+    <div class="table-scroll">
+      <table style="min-width:680px">
+        <thead><tr><th>Layanan</th><th>Metode</th><th>Fungsinya</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">File</td><td class="mono">file.setDescription(teks)</td><td>Mengisi kolom deskripsi file di Drive sebagai metadata</td></tr>
+          <tr><td class="mono">File</td><td class="mono">file.getDescription()</td><td>Membaca deskripsi yang sudah tersimpan</td></tr>
+          <tr><td class="mono">Folder</td><td class="mono">folder.getFoldersByName(nama)</td><td>Mencari subfolder berdasarkan nama</td></tr>
+          <tr><td class="mono">PropertiesService</td><td class="mono">getScriptProperties()</td><td>Membuka penyimpanan kunci-nilai milik skrip</td></tr>
+          <tr><td class="mono">Properties</td><td class="mono">getProperty(kunci), setProperty(kunci, nilai)</td><td>Membaca dan menyimpan satu nilai</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><b>Perhatikan:</b> <code>PropertiesService</code> menyimpan nilai yang tetap ada meski skrip selesai berjalan. Nilainya selalu berbentuk teks, jadi angka harus diubah dengan <code>Number()</code> saat dibaca. Layanan ini cocok untuk penghitung nomor urut dan pengaturan skrip. Metadata tiap file disimpan di deskripsinya, bukan di Properties.</p>
+
+    <h3>4. Praktikum: memperluas skrip sesi 2</h3>
+
+    <h4>Langkah 1. Siapkan Form, folder, dan Sheets</h4>
+    <ol class="plain">
+      <li>Di Form, tambahkan pertanyaan pilihan ganda berjudul <b>Kategori Surat</b> dengan pilihan sesuai skema Anda (misalnya Umum, Kepegawaian, Keuangan, Akademik).</li>
+      <li>Di folder "Arsip Surat Masuk", buat subfolder yang <b>namanya persis sama</b> dengan setiap pilihan kategori.</li>
+      <li>Di lembar kerja <code>Agenda</code>, tambahkan dua kolom di akhir: <code>Kategori</code> dan <code>Kode Arsip</code>. Urutan kolom setelah perubahan: No. Agenda, Tanggal Diterima, Nomor Surat, Pengirim, Perihal, Jenis Surat, Tautan File, Kategori, Kode Arsip.</li>
+    </ol>
+
+    <h4>Langkah 2. Ganti isi skrip</h4>
+    <p>Perbarui skrip di editor Form dengan versi berikut. Trigger dari sesi 2 tetap dipakai, karena nama fungsi utamanya sama.</p>
+    <pre><code><span class="cm">// Ganti dengan ID milik Anda</span>
+const ID_SPREADSHEET = "ID_SPREADSHEET_AGENDA";
+const ID_FOLDER_ARSIP = "ID_FOLDER_ARSIP";
+
+<span class="cm">// Skema klasifikasi: nama kategori di Form -&gt; kode klasifikasi</span>
+const SKEMA = {
+  "Umum": "UM",
+  "Kepegawaian": "KP",
+  "Keuangan": "KU",
+  "Akademik": "AK"
+};
+
+function ambilJawaban(response) {
+  const hasil = {};
+  response.getItemResponses().forEach(function (ir) {
+    hasil[ir.getItem().getTitle()] = ir.getResponse();
+  });
+  return hasil;
+}
+
+<span class="cm">// Nomor urut per kode, disimpan permanen di PropertiesService</span>
+function nomorUrutBerikut(kode) {
+  const props = PropertiesService.getScriptProperties();
+  const kunci = "urut_" + kode;
+  const berikut = (Number(props.getProperty(kunci)) || 0) + 1;
+  props.setProperty(kunci, String(berikut));
+  return berikut;
+}
+
+<span class="cm">// Mencari subfolder; berhenti dengan pesan jelas jika tidak ada</span>
+function ambilSubfolder(induk, nama) {
+  const hasil = induk.getFoldersByName(nama);
+  if (!hasil.hasNext()) {
+    throw new Error("Subfolder tidak ditemukan: " + nama);
+  }
+  return hasil.next();
+}
+
+function catatSuratMasuk(e) {
+  const jawaban = ambilJawaban(e.response);
+
+  <span class="cm">// 1. Klasifikasi: kategori -&gt; kode -&gt; nomor arsip</span>
+  const kategori = jawaban["Kategori Surat"];
+  const kode = SKEMA[kategori];
+  if (!kode) {
+    throw new Error("Kategori tidak ada di skema: " + kategori);
+  }
+  const nomorArsip = kode + "-" + String(nomorUrutBerikut(kode)).padStart(3, "0");  <span class="cm">// mis. KP-001</span>
+
+  <span class="cm">// 2. Pindahkan file ke subfolder kategori</span>
+  const file = DriveApp.getFileById(jawaban["Unggah File Surat"][0]);
+  const induk = DriveApp.getFolderById(ID_FOLDER_ARSIP);
+  file.moveTo(ambilSubfolder(induk, kategori));
+
+  <span class="cm">// 3. Isi metadata pada deskripsi file</span>
+  file.setDescription(
+    "Kode arsip: " + nomorArsip +
+    " | Kategori: " + kategori +
+    " | Pengirim: " + jawaban["Pengirim"] +
+    " | Perihal: " + jawaban["Perihal"]
+  );
+
+  <span class="cm">// 4. Catat ke buku agenda</span>
+  const sheet = SpreadsheetApp.openById(ID_SPREADSHEET).getSheetByName("Agenda");
+  const nomorAgenda = "SM-" + String(sheet.getLastRow()).padStart(3, "0");
+  sheet.appendRow([
+    nomorAgenda,
+    new Date(),
+    jawaban["Nomor Surat"],
+    jawaban["Pengirim"],
+    jawaban["Perihal"],
+    jawaban["Jenis Surat"],
+    file.getUrl(),
+    kategori,
+    nomorArsip
+  ]);
+}</code></pre>
+    <p>Alurnya: kategori dari Form diubah menjadi kode lewat <code>SKEMA</code>, kode itu dipakai untuk membuat nomor arsip, file dipindahkan ke subfolder yang namanya sama dengan kategori, lalu metadata ditulis ke deskripsi file dan ke Sheets.</p>
+
+    <h4>Langkah 3. Uji dan periksa hasilnya</h4>
+    <ol class="plain">
+      <li>Gunakan fungsi <code>ujiCoba()</code> dari sesi 2, atau kirim Form sungguhan untuk setiap kategori.</li>
+      <li>Di Drive, pastikan file masuk ke subfolder yang benar. Klik file, buka ikon <b>ⓘ</b> (Detail), lalu baca kolom deskripsi.</li>
+      <li>Di Sheets, pastikan kolom Kategori dan Kode Arsip terisi dan nomor urut berjalan per kode (UM-001, UM-002, KP-001, dan seterusnya).</li>
+    </ol>
+    <p>Dua fungsi bantu berikut berguna selama pengujian:</p>
+    <pre><code><span class="cm">// Melihat semua nomor urut yang tersimpan</span>
+function lihatCounter() {
+  Logger.log(PropertiesService.getScriptProperties().getProperties());
+}
+
+<span class="cm">// Mengulang semua nomor urut dari awal (jalankan setelah selesai uji coba)</span>
+function resetCounter() {
+  PropertiesService.getScriptProperties().deleteAllProperties();
+}</code></pre>
+    <div class="box"><strong>Catatan:</strong> nomor urut tetap bertambah setiap <code>ujiCoba()</code> dijalankan, dan nomor bisa terlewat bila skrip gagal di tengah jalan. Jalankan <code>resetCounter()</code> dan hapus baris uji di Sheets sebelum pengumpulan tugas.</div>
+
+    <h3>5. Pemecahan masalah</h3>
+    <div class="table-scroll">
+      <table style="min-width:680px">
+        <thead><tr><th>Gejala</th><th>Penyebab umum</th><th>Perbaikan</th></tr></thead>
+        <tbody>
+          <tr><td>Error <code>Kategori tidak ada di skema</code></td><td>Pilihan di Form tidak persis sama dengan kunci <code>SKEMA</code> (huruf besar, spasi)</td><td>Samakan teks pilihan Form dan kunci <code>SKEMA</code></td></tr>
+          <tr><td>Error <code>Subfolder tidak ditemukan</code></td><td>Nama subfolder berbeda dengan nama kategori, atau berada di luar folder arsip</td><td>Samakan nama dan pindahkan subfolder ke dalam folder arsip</td></tr>
+          <tr><td>Nomor arsip tidak mulai dari 001 setelah uji coba</td><td>Penghitung tersimpan permanen</td><td>Jalankan <code>resetCounter()</code></td></tr>
+          <tr><td>Deskripsi file kosong di Drive</td><td>Skrip berhenti sebelum <code>setDescription()</code>, atau tampilan belum dimuat ulang</td><td>Periksa daftar Eksekusi untuk galat, lalu muat ulang halaman Drive</td></tr>
+          <tr><td>Isi kolom di Sheets bergeser</td><td>Urutan <code>appendRow</code> tidak sama dengan judul kolom</td><td>Samakan urutan judul kolom dan urutan isi baris</td></tr>
+          <tr><td>Form dikirim tetapi tidak ada yang terjadi</td><td>Trigger sesi 2 terhapus atau jenisnya salah</td><td>Cek menu Pemicu dan daftar Eksekusi</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tugas">
+    <div class="section-head"><span class="section-num">D</span><h2>Tugas Praktikum Sesi 3</h2></div>
+    <p class="lede">Skema klasifikasi dirancang bersama kelompok, sedangkan skripnya dikerjakan berpasangan. Semuanya dikumpulkan sebelum sesi 4.</p>
+    <ol class="plain">
+      <li><b>Rancang skema klasifikasi studi kasus kelompok</b> dalam bentuk tabel: minimal empat kategori, dengan kode, contoh dokumen, dan alasan pengelompokan. Pastikan skema memenuhi prinsip logis dan saling lepas.</li>
+      <li><b>Terapkan skema tersebut</b> pada alur penerimaan dari sesi 2: pertanyaan kategori di Form, subfolder di Drive, kode arsip, dan deskripsi metadata otomatis.</li>
+      <li><b>Uji</b> dengan minimal dua dokumen untuk setiap kategori, lalu jalankan <code>resetCounter()</code> dan bersihkan baris uji sebelum mengumpulkan.</li>
+      <li><b>Perbarui laporan progres kelompok</b> dari sesi 2: ubah status tahap Klasifikasi &amp; metadata, lalu tulis kendala dan rencana sesi berikutnya.</li>
+      <li><b>Kumpulkan:</b> tabel skema klasifikasi, tautan Form, Spreadsheet (akses lihat), dan proyek skrip, tangkapan layar subfolder Drive beserta deskripsi satu file, dan laporan progres terbaru.</li>
+    </ol>
+
+    <h3>Rubrik penilaian</h3>
+    <p>Penilaian mengacu pada indikator RPS: skema klasifikasi logis serta metadata dan folder tepat, ditambah laporan progres proyek akhir kelompok.</p>
+    <div class="table-scroll">
+      <table style="min-width:560px">
+        <thead><tr><th>Indikator</th><th>Kriteria</th><th>Skor</th></tr></thead>
+        <tbody>
+          <tr><td>Skema klasifikasi logis</td><td>Kategori jelas, saling lepas, dan mencakup dokumen studi kasus; kode konsisten; alasan pengelompokan masuk akal</td><td class="score">30</td></tr>
+          <tr><td>Metadata &amp; folder tepat</td><td>Setiap dokumen masuk subfolder yang benar; deskripsi dan kode arsip lengkap; nomor urut per kode berjalan benar</td><td class="score">30</td></tr>
+          <tr><td>Skrip &amp; adaptasi studi kasus</td><td>Skrip berjalan otomatis, memuat penanganan galat, dan berkomentar</td><td class="score">20</td></tr>
+          <tr><td>Laporan progres kelompok</td><td>Status tahap terisi jujur; kendala dan rencana ditulis</td><td class="score">20</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="referensi">
+    <div class="section-head"><span class="section-num">E</span><h2>Bahan Bacaan</h2></div>
+    <ul class="plain">
+      <li>Dokumentasi resmi Google Apps Script — developers.google.com/apps-script (bagian Drive Service, Properties Service).</li>
+      <li>Read, J., &amp; Ginn, M. L. <em>Records Management</em> — bab tentang klasifikasi dan pengindeksan rekaman.</li>
+      <li>Pedoman klasifikasi arsip yang berlaku di organisasi studi kasus Anda (jika ada).</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <a href="sesi02.html">← Sesi 2</a>
+  <a href="index.html">Kembali ke RPS</a>
+  <a href="sesi04.html">Sesi 4 berikutnya →</a>
+  <div style="margin-top:10px;">Manajemen Dokumen Digital — Philipus Suryo Subandoro</div>
+</footer>
+
+</body>
+</html>
