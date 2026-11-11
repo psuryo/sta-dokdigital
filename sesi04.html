@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sesi 4 — Penamaan &amp; Struktur Penyimpanan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EEE3; --paper-raised:#FAF8F2; --ink:#22262B; --ink-soft:#585B52;
+    --navy:#1E3A52; --navy-deep:#13293D; --kraft:#9C6B30; --stamp:#A6402B; --sage:#4E6F5C;
+    --line:#D9D2C0; --line-strong:#C3B99E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;}
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:600;color:var(--navy-deep);margin:0;}
+  a{color:var(--navy);}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+  header.cover{background:var(--navy-deep);color:var(--paper-raised);padding:48px 0 40px;position:relative;overflow:hidden;}
+  header.cover::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,.035) 0 1px,transparent 1px 28px);pointer-events:none;}
+  .cover-inner{position:relative;}
+  .back{display:inline-block;font-size:14px;color:#9FB3C2;text-decoration:none;margin-bottom:22px;}
+  .back:hover{color:#fff;}
+  .eyebrow-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+  .course-code{font-family:"IBM Plex Mono",monospace;font-size:13px;color:#C9B98C;border:1px solid rgba(201,185,140,.45);border-radius:3px;padding:3px 9px;}
+  .doc-type{font-size:14px;color:#9FB3C2;}
+  header.cover h1{font-size:clamp(30px,4.6vw,46px);line-height:1.1;max-width:20ch;color:#fff;}
+  .cover-sub{margin-top:14px;font-size:17px;color:#C7D3DA;max-width:56ch;}
+  .cover-meta{margin-top:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:1px solid rgba(255,255,255,.18);}
+  .cover-meta div{padding:14px 20px 0;border-left:1px solid rgba(255,255,255,.18);}
+  .cover-meta div:first-child{border-left:none;padding-left:0;}
+  .cover-meta .label{font-size:12px;color:#8EA2B1;margin-bottom:2px;}
+  .cover-meta .value{font-size:15px;color:#F2EEE3;font-weight:500;}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
+  .section-num{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--kraft);}
+  section h2{font-size:26px;}
+  section h3{font-size:19px;margin:28px 0 8px;}
+  p{max-width:72ch;margin:0 0 12px;}
+  .lede{color:var(--ink-soft);font-size:17px;}
+  ul.plain,ol.plain{max-width:72ch;padding-left:20px;margin:0 0 12px;}
+  ul.plain li,ol.plain li{margin-bottom:6px;}
+
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:4px;margin:8px 0 16px;}
+  table{width:100%;border-collapse:collapse;background:var(--paper-raised);min-width:640px;}
+  th{background:var(--navy-deep);color:#F2EEE3;font-weight:500;font-size:13px;text-align:left;padding:10px 14px;}
+  td{padding:12px 14px;border-top:1px solid var(--line);font-size:14.5px;vertical-align:top;}
+  tr:nth-child(even) td{background:#EFEADC;}
+  td.mono,td code{font-family:"IBM Plex Mono",monospace;font-size:13px;}
+  td.score{font-weight:600;color:var(--kraft);white-space:nowrap;}
+
+  pre{background:var(--navy-deep);color:#E6EDF1;border-radius:4px;padding:16px 18px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;margin:8px 0 16px;max-width:760px;}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:#E7E1CF;padding:1px 5px;border-radius:3px;}
+  pre code{background:none;padding:0;font-size:inherit;}
+  .cm{color:#8EA2B1;}
+
+  .flow{list-style:none;margin:0;padding:0;max-width:820px;border:1px solid var(--line-strong);border-radius:4px;background:var(--paper-raised);}
+  .flow li{display:flex;gap:18px;padding:16px 20px;border-top:1px solid var(--line);}
+  .flow li:first-child{border-top:none;}
+  .flow .no{flex:0 0 28px;font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:22px;line-height:1.2;color:var(--kraft);}
+  .flow strong{display:block;color:var(--navy-deep);}
+  .flow span.d{font-size:14.5px;color:var(--ink-soft);}
+
+  h4{font-family:"IBM Plex Sans",sans-serif;font-size:16px;font-weight:600;color:var(--navy-deep);margin:22px 0 6px;}
+  h4 code{font-size:.9em;}
+  .box{max-width:72ch;border-left:3px solid var(--stamp);background:var(--paper-raised);padding:14px 18px;margin:16px 0;font-size:15px;}
+  .box strong{color:var(--stamp);}
+  footer{padding:36px 0 56px;text-align:center;color:var(--ink-soft);font-size:13.5px;}
+  footer a{margin:0 10px;}
+
+  .sistem{display:flex;flex-wrap:wrap;align-items:stretch;max-width:900px;margin:12px 0 20px;}
+  .sistem .node{flex:1 1 150px;background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:4px;padding:12px 14px;}
+  .sistem .node b{display:block;font-family:"Fraunces",Georgia,serif;color:var(--navy-deep);font-size:16px;margin-bottom:2px;}
+  .sistem .node span{font-size:13.5px;color:var(--ink-soft);}
+  .sistem .panah{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:var(--kraft);font-size:20px;}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap cover-inner">
+    <a class="back" href="index.html">← Kembali ke RPS</a>
+    <div class="eyebrow-row">
+      <span class="course-code">MDD · Sesi 4</span>
+      <span class="doc-type">Pertemuan Minggu 4</span>
+    </div>
+    <h1>Penamaan &amp; Struktur Penyimpanan</h1>
+    <p class="cover-sub">Menerapkan konvensi penamaan file dan struktur folder arsip yang terbentuk otomatis, sehingga setiap dokumen punya nama yang seragam dan tersimpan di tempat yang tepat.</p>
+    <div class="cover-meta">
+      <div><div class="label">Metode</div><div class="value">Praktikum lab, live coding</div></div>
+      <div><div class="label">Bobot tugas</div><div class="value">10%</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="tujuan">
+    <div class="section-head"><span class="section-num">A</span><h2>Tujuan Pembelajaran</h2></div>
+    <p class="lede">Setelah sesi ini, Anda mampu menerapkan penamaan file dan struktur penyimpanan dokumen secara otomatis.</p>
+    <ol class="plain">
+      <li>Menjelaskan prinsip konvensi penamaan file dan struktur folder arsip yang baik.</li>
+      <li>Merancang konvensi penamaan dan struktur folder untuk studi kasus kelompok Anda.</li>
+      <li>Menulis fungsi yang membentuk nama file otomatis dengan <code>file.setName()</code> dan <code>Utilities.formatDate()</code>.</li>
+      <li>Membuat folder tahun dan kategori secara otomatis dengan <code>createFolder()</code> tanpa menghasilkan folder ganda.</li>
+    </ol>
+    <p><strong>Prasyarat:</strong> skrip penerimaan dan klasifikasi dari sesi 2 dan 3 sudah berjalan, karena sesi ini memperluas skrip tersebut.</p>
+  </section>
+
+  <section id="alur">
+    <div class="section-head"><span class="section-num">B</span><h2>Alur Kegiatan</h2></div>
+    <ol class="flow">
+      <li><span class="no">1</span><div><strong>Pembukaan &amp; review sesi 3</strong><span class="d">Memeriksa hasil tugas sesi 3 dan membahas kendala pada klasifikasi dan metadata.</span></div></li>
+      <li><span class="no">2</span><div><strong>Konsep penamaan file dan struktur folder</strong><span class="d">Prinsip penamaan, pola nama, hierarki folder, serta pola "ambil atau buat" folder.</span></div></li>
+      <li><span class="no">3</span><div><strong>Merancang konvensi dan struktur folder kelompok</strong><span class="d">Kelompok menyusun pola nama dan hierarki folder untuk organisasi studi kasusnya, lalu saling menguji dengan contoh dokumen.</span></div></li>
+      <li><span class="no">4</span><div><strong>Praktikum: memperluas skrip sesi 3</strong><span class="d">Menambahkan fungsi pembuat nama, fungsi pembuat folder, dan langkah penamaan ke skrip utama.</span></div></li>
+      <li><span class="no">5</span><div><strong>Uji coba, progres kelompok &amp; penutup</strong><span class="d">Menguji beberapa kiriman Form, memeriksa nama dan folder di Drive, dan memperbarui laporan progres proyek akhir.</span></div></li>
+    </ol>
+  </section>
+
+  <section id="materi">
+    <div class="section-head"><span class="section-num">C</span><h2>Materi Pembelajaran</h2></div>
+
+    <h3>1. Konvensi penamaan file</h3>
+    <p>Konvensi penamaan adalah aturan baku untuk memberi nama file. Tanpa aturan, folder penuh nama seperti <code>surat scan final (2) revisi.pdf</code>, yang tidak bisa diurutkan, sulit dicari, dan tidak menjelaskan isinya. Dengan aturan yang sama untuk semua orang, nama file sudah memberi tahu isi dokumennya.</p>
+
+    <h4>Prinsip nama file yang baik</h4>
+    <div class="table-scroll">
+      <table style="min-width:640px">
+        <thead><tr><th>Prinsip</th><th>Artinya</th><th>Contoh</th></tr></thead>
+        <tbody>
+          <tr><td>Informatif</td><td>Memuat unsur yang menjelaskan dokumen: unit, jenis, tanggal, nomor</td><td class="mono">SEK_UND_20261112_UM-001.pdf</td></tr>
+          <tr><td>Konsisten</td><td>Pola yang sama untuk semua dokumen</td><td>Selalu urutan unit, jenis, tanggal, nomor</td></tr>
+          <tr><td>Mudah diurutkan</td><td>Tanggal ditulis <code>yyyyMMdd</code> (tahun, bulan, hari) agar urutan abjad sama dengan urutan waktu</td><td class="mono">20261112 (bukan 12-11-2026)</td></tr>
+          <tr><td>Aman dipakai</td><td>Tanpa spasi dan karakter khusus; pemisah memakai garis bawah <code>_</code></td><td>Hindari <code>/ \ : * ? "</code></td></tr>
+          <tr><td>Ringkas</td><td>Singkatan baku untuk unit dan jenis dokumen</td><td class="mono">UND = Undangan</td></tr>
+          <tr><td>Tidak membocorkan data sensitif</td><td>Nama file ikut terlihat saat dokumen dibagikan</td><td>Hindari nomor KTP atau gaji pada nama file</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Pola yang dipakai di praktikum</h4>
+    <p>Pola mengikuti RPS: <code>[Unit]_[JenisDok]_[Tanggal]_[NomorUrut]</code>. Nomor urut memakai kode arsip dari sesi 3 (misalnya <code>UM-001</code>), yang sudah unik untuk setiap dokumen. Hasilnya:</p>
+    <pre><code>SEK_UND_20261112_UM-001.pdf
+SEK_PMH_20261113_KP-004.pdf</code></pre>
+
+    <h3>2. Struktur folder arsip</h3>
+    <p>Struktur folder adalah hierarki tempat dokumen disimpan. Di lemari arsip, ia seperti urutan lemari, laci, dan map. Struktur yang baik mengikuti skema klasifikasi dari sesi 3 dan membatasi kedalaman agar tidak membingungkan.</p>
+    <pre><code>Arsip Surat Masuk
+ └─ 2026
+     ├─ Umum
+     ├─ Kepegawaian
+     ├─ Keuangan
+     └─ Akademik</code></pre>
+    <ul class="plain">
+      <li><b>Maksimal 3–4 tingkat.</b> Struktur yang terlalu dalam menyulitkan pencarian.</li>
+      <li><b>Pembagi pertama berdasarkan waktu</b> (tahun) agar arsip lama mudah diperiksa masa retensinya di sesi 7.</li>
+      <li><b>Pembagi berikutnya berdasarkan skema klasifikasi</b> dari sesi 3.</li>
+      <li><b>Folder dibuat otomatis saat dibutuhkan</b>, tetapi hanya jika belum ada, supaya tidak muncul folder ganda.</li>
+    </ul>
+
+    <h3>3. Alur otomasi sesi ini</h3>
+    <div class="sistem">
+      <div class="node"><b>Dokumen masuk</b><span>Nama asli bebas, misalnya "scan final (2).pdf"</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Folder tujuan</b><span>Arsip → tahun → kategori, dibuat jika belum ada</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Nama baru</b><span>Unit, jenis, tanggal, nomor arsip</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Tercatat</b><span>Nama file dan tautan masuk buku agenda</span></div>
+    </div>
+
+    <h4>Sintaks baru yang dipakai</h4>
+    <div class="table-scroll">
+      <table style="min-width:700px">
+        <thead><tr><th>Layanan</th><th>Metode</th><th>Fungsinya</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">File</td><td class="mono">file.getName(), file.setName(nama)</td><td>Membaca dan mengganti nama file, termasuk ekstensinya</td></tr>
+          <tr><td class="mono">Folder</td><td class="mono">induk.createFolder(nama)</td><td>Membuat folder <b>di dalam</b> folder induk</td></tr>
+          <tr><td class="mono">Folder</td><td class="mono">induk.getFoldersByName(nama)</td><td>Mencari subfolder; hasilnya iterator, diperiksa dengan <code>hasNext()</code></td></tr>
+          <tr><td class="mono">Utilities</td><td class="mono">Utilities.formatDate(tgl, zona, pola)</td><td>Mengubah tanggal menjadi teks, misalnya <code>"yyyyMMdd"</code> atau <code>"yyyy"</code></td></tr>
+          <tr><td class="mono">String</td><td class="mono">teks.lastIndexOf("."), teks.substring(n)</td><td>Mencari posisi titik terakhir dan mengambil bagian teks sesudahnya (ekstensi)</td></tr>
+          <tr><td class="mono">Operator</td><td class="mono">kondisi ? nilaiA : nilaiB</td><td>Singkatan <code>if/else</code> untuk memilih satu dari dua nilai</td></tr>
+          <tr><td class="mono">Operator</td><td class="mono">nilai || cadangan</td><td>Memakai nilai cadangan bila nilai pertama kosong</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box"><strong>Perbedaan penting:</strong> <code>DriveApp.createFolder(nama)</code> membuat folder di <b>akar My Drive</b>, bukan di folder arsip Anda. Untuk membuat folder di dalam folder tertentu, panggil <code>induk.createFolder(nama)</code> dari folder induknya.</div>
+    <p><b>Ekstensi file.</b> <code>setName()</code> mengganti seluruh nama, termasuk bagian <code>.pdf</code>. Karena itu skrip harus mengambil ekstensi dari nama lama, lalu menyambungkannya kembali ke nama baru.</p>
+
+    <h3>4. Praktikum: memperluas skrip sesi 3</h3>
+
+    <h4>Langkah 1. Uji fungsi penamaan lebih dulu</h4>
+    <p>Fungsi penamaan tidak butuh Form, sehingga bisa diuji langsung. Tempel dua fungsi berikut ke editor skrip, lalu jalankan <code>ujiPenamaan</code> dan lihat hasilnya di log.</p>
+    <pre><code>const KODE_UNIT = "SEK";   <span class="cm">// ganti dengan kode unit studi kasus Anda</span>
+
+const SINGKATAN_JENIS = {
+  "Undangan": "UND",
+  "Permohonan": "PMH",
+  "Pemberitahuan": "PBT",
+  "Lainnya": "LNN"
+};
+
+<span class="cm">// Membuat nama file baru dengan mempertahankan ekstensi</span>
+function buatNamaFile(namaLama, jenis, nomorArsip, tanggal) {
+  const titik = namaLama.lastIndexOf(".");
+  const ekstensi = titik === -1 ? "" : namaLama.substring(titik);   <span class="cm">// mis. ".pdf"</span>
+  const singkatan = SINGKATAN_JENIS[jenis] || "LNN";
+  const tgl = Utilities.formatDate(tanggal, "Asia/Jakarta", "yyyyMMdd");
+  return KODE_UNIT + "_" + singkatan + "_" + tgl + "_" + nomorArsip + ekstensi;
+}
+
+function ujiPenamaan() {
+  Logger.log(buatNamaFile("scan final (2).pdf", "Undangan", "UM-001", new Date()));
+  <span class="cm">// hasil: SEK_UND_20261112_UM-001.pdf (tanggal sesuai hari ini)</span>
+}</code></pre>
+
+    <h4>Langkah 2. Tambahkan fungsi "ambil atau buat folder"</h4>
+    <p>Fungsi ini menggantikan <code>ambilSubfolder</code> dari sesi 3. Ia mencari folder bernama tertentu; bila ada, dipakai, dan bila belum ada, dibuat.</p>
+    <pre><code>function ambilAtauBuatFolder(induk, nama) {
+  const hasil = induk.getFoldersByName(nama);
+  if (hasil.hasNext()) {
+    return hasil.next();
+  }
+  return induk.createFolder(nama);
+}</code></pre>
+
+    <h4>Langkah 3. Perbarui kolom Sheets</h4>
+    <p>Tambahkan satu kolom lagi di akhir lembar <code>Agenda</code> berjudul <code>Nama File</code>, sehingga kolom terakhir menjadi: ... Tautan File, Kategori, Kode Arsip, Nama File.</p>
+
+    <h4>Langkah 4. Perbarui fungsi utama</h4>
+    <p>Ganti <code>catatSuratMasuk</code> dengan versi berikut. Fungsi <code>ambilJawaban</code>, <code>nomorUrutBerikut</code>, konstanta <code>SKEMA</code>, <code>ID_SPREADSHEET</code>, dan <code>ID_FOLDER_ARSIP</code> dari sesi 3 tetap dipakai tanpa perubahan.</p>
+    <pre><code>function catatSuratMasuk(e) {
+  const jawaban = ambilJawaban(e.response);
+  const sekarang = new Date();
+
+  <span class="cm">// 1. Klasifikasi (dari sesi 3)</span>
+  const kategori = jawaban["Kategori Surat"];
+  const kode = SKEMA[kategori];
+  if (!kode) {
+    throw new Error("Kategori tidak ada di skema: " + kategori);
+  }
+  const nomorArsip = kode + "-" + String(nomorUrutBerikut(kode)).padStart(3, "0");
+
+  <span class="cm">// 2. Susun folder tujuan: Arsip -&gt; Tahun -&gt; Kategori</span>
+  const file = DriveApp.getFileById(jawaban["Unggah File Surat"][0]);
+  const tahun = Utilities.formatDate(sekarang, "Asia/Jakarta", "yyyy");
+  const folderTahun = ambilAtauBuatFolder(DriveApp.getFolderById(ID_FOLDER_ARSIP), tahun);
+  const folderKategori = ambilAtauBuatFolder(folderTahun, kategori);
+  file.moveTo(folderKategori);
+
+  <span class="cm">// 3. Beri nama baru sesuai konvensi</span>
+  file.setName(buatNamaFile(file.getName(), jawaban["Jenis Surat"], nomorArsip, sekarang));
+
+  <span class="cm">// 4. Isi metadata pada deskripsi file (dari sesi 3)</span>
+  file.setDescription(
+    "Kode arsip: " + nomorArsip +
+    " | Kategori: " + kategori +
+    " | Pengirim: " + jawaban["Pengirim"] +
+    " | Perihal: " + jawaban["Perihal"]
+  );
+
+  <span class="cm">// 5. Catat ke buku agenda</span>
+  const sheet = SpreadsheetApp.openById(ID_SPREADSHEET).getSheetByName("Agenda");
+  const nomorAgenda = "SM-" + String(sheet.getLastRow()).padStart(3, "0");
+  sheet.appendRow([
+    nomorAgenda,
+    sekarang,
+    jawaban["Nomor Surat"],
+    jawaban["Pengirim"],
+    jawaban["Perihal"],
+    jawaban["Jenis Surat"],
+    file.getUrl(),
+    kategori,
+    nomorArsip,
+    file.getName()
+  ]);
+}</code></pre>
+    <p>Alurnya: kategori diubah menjadi kode dan nomor arsip, folder tahun dan kategori disiapkan, file dipindahkan, diberi nama baru, diberi deskripsi, lalu dicatat di Sheets.</p>
+
+    <h4>Langkah 5. Uji dan periksa</h4>
+    <ol class="plain">
+      <li>Jalankan <code>ujiCoba()</code> dari sesi 2 atau kirim Form sungguhan, minimal tiga kali dengan kategori berbeda dan satu kategori diulang.</li>
+      <li>Di Drive, pastikan struktur folder <b>Arsip → tahun → kategori</b> terbentuk dan nama file mengikuti pola.</li>
+      <li>Kirim dua dokumen dengan kategori yang sama dan pastikan <b>tidak ada folder ganda</b>.</li>
+      <li>Di Sheets, pastikan kolom Nama File berisi nama baru.</li>
+    </ol>
+    <div class="box"><strong>Catatan:</strong> bila dua Form masuk pada detik yang sama, folder ganda masih mungkin terbentuk. Pada sistem sungguhan, hal ini dicegah dengan <code>LockService</code>. Untuk latihan ini, cukup periksa dan hapus folder ganda secara manual bila muncul.</div>
+
+    <h3>5. Pemecahan masalah</h3>
+    <div class="table-scroll">
+      <table style="min-width:680px">
+        <thead><tr><th>Gejala</th><th>Penyebab umum</th><th>Perbaikan</th></tr></thead>
+        <tbody>
+          <tr><td>Nama file tidak punya ekstensi (<code>.pdf</code> hilang)</td><td>Ekstensi tidak diambil dari nama lama dan disambung kembali</td><td>Pastikan <code>buatNamaFile</code> memakai <code>file.getName()</code> sebagai <code>namaLama</code></td></tr>
+          <tr><td>Folder tahun muncul di luar folder arsip</td><td>Memakai <code>DriveApp.createFolder()</code>, bukan <code>induk.createFolder()</code></td><td>Buat folder lewat <code>ambilAtauBuatFolder</code> dengan induk yang benar</td></tr>
+          <tr><td>Muncul folder tahun atau kategori ganda</td><td>Folder dibuat tanpa memeriksa lebih dulu, atau dua kiriman masuk bersamaan</td><td>Gunakan <code>ambilAtauBuatFolder</code>; hapus folder ganda secara manual</td></tr>
+          <tr><td>Nama file memuat kata <code>undefined</code></td><td>Salah satu nilai kosong, misalnya judul pertanyaan "Jenis Surat" tidak sama persis</td><td>Cek judul pertanyaan Form dan urutan parameter pada <code>buatNamaFile</code></td></tr>
+          <tr><td>Tanggal pada nama file selisih satu hari</td><td>Zona waktu tidak diisi pada <code>formatDate</code></td><td>Pakai <code>"Asia/Jakarta"</code> sebagai argumen kedua</td></tr>
+          <tr><td>Isi kolom di Sheets bergeser</td><td>Urutan <code>appendRow</code> tidak sama dengan judul kolom, atau kolom Nama File belum ditambahkan</td><td>Samakan urutan judul kolom dan urutan isi baris</td></tr>
+          <tr><td>Form dikirim tetapi tidak ada yang terjadi</td><td>Trigger dari sesi 2 terhapus atau jenisnya salah</td><td>Cek menu Pemicu dan daftar Eksekusi</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tugas">
+    <div class="section-head"><span class="section-num">D</span><h2>Tugas Praktikum Sesi 4</h2></div>
+    <p class="lede">Konvensi dan struktur folder dirancang bersama kelompok, sedangkan skripnya dikerjakan berpasangan. Semuanya dikumpulkan sebelum sesi 5.</p>
+    <ol class="plain">
+      <li><b>Rancang konvensi penamaan dan struktur folder studi kasus kelompok.</b> Tuliskan pola nama, arti tiap unsur, daftar singkatan, lima contoh nama file, dan bagan struktur folder (maksimal empat tingkat).</li>
+      <li><b>Terapkan rancangan tersebut</b> pada skrip sesi 3: nama file otomatis dan folder tahun serta kategori yang dibuat otomatis tanpa duplikat.</li>
+      <li><b>Uji</b> dengan minimal tiga dokumen pada tiga kategori berbeda dan dua dokumen pada kategori yang sama. Hapus baris uji dan jalankan <code>resetCounter()</code> sebelum mengumpulkan.</li>
+      <li><b>Perbarui laporan progres kelompok:</b> ubah status tahap Penamaan &amp; penyimpanan, lalu tulis kendala dan rencana sesi berikutnya.</li>
+      <li><b>Kumpulkan:</b> dokumen konvensi dan struktur folder, tautan Form, Spreadsheet (akses lihat), dan proyek skrip, tangkapan layar struktur folder serta daftar nama file di Drive, dan laporan progres terbaru.</li>
+    </ol>
+
+    <h3>Rubrik penilaian</h3>
+    <p>Penilaian mengacu pada indikator RPS: penamaan konsisten dan struktur folder sesuai skema, ditambah laporan progres proyek akhir kelompok.</p>
+    <div class="table-scroll">
+      <table style="min-width:560px">
+        <thead><tr><th>Indikator</th><th>Kriteria</th><th>Skor</th></tr></thead>
+        <tbody>
+          <tr><td>Penamaan konsisten</td><td>Semua file mengikuti pola; ekstensi terjaga; tanggal berformat benar; konvensi terdokumentasi jelas</td><td class="score">30</td></tr>
+          <tr><td>Struktur folder sesuai skema</td><td>Hierarki selaras dengan skema klasifikasi sesi 3; terbentuk otomatis; tidak ada folder ganda</td><td class="score">30</td></tr>
+          <tr><td>Skrip &amp; adaptasi studi kasus</td><td>Skrip berjalan otomatis, memuat penanganan galat, dan berkomentar; unsur nama sesuai studi kasus</td><td class="score">20</td></tr>
+          <tr><td>Laporan progres kelompok</td><td>Status tahap terisi jujur; kendala dan rencana ditulis</td><td class="score">20</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="referensi">
+    <div class="section-head"><span class="section-num">E</span><h2>Bahan Bacaan</h2></div>
+    <ul class="plain">
+      <li>Dokumentasi resmi Google Apps Script — developers.google.com/apps-script (bagian Drive Service: File, Folder; dan Utilities.formatDate).</li>
+      <li>Pedoman penamaan file dan pengelolaan arsip digital dari perpustakaan atau unit kearsipan kampus/instansi Anda (jika ada).</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <a href="sesi03.html">← Sesi 3</a>
+  <a href="index.html">Kembali ke RPS</a>
+  <a href="sesi05.html">Sesi 5 berikutnya →</a>
+  <div style="margin-top:10px;">Manajemen Dokumen Digital — Philipus Suryo Subandoro</div>
+</footer>
+
+</body>
+</html>
