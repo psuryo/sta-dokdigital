@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proyek Akhir — Ketentuan &amp; Penilaian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EEE3; --paper-raised:#FAF8F2; --ink:#22262B; --ink-soft:#585B52;
+    --navy:#1E3A52; --navy-deep:#13293D; --kraft:#9C6B30; --stamp:#A6402B; --sage:#4E6F5C;
+    --line:#D9D2C0; --line-strong:#C3B99E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;}
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:600;color:var(--navy-deep);margin:0;}
+  a{color:var(--navy);}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+  header.cover{background:var(--navy-deep);color:var(--paper-raised);padding:48px 0 40px;position:relative;overflow:hidden;}
+  header.cover::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,.035) 0 1px,transparent 1px 28px);pointer-events:none;}
+  .cover-inner{position:relative;}
+  .back{display:inline-block;font-size:14px;color:#9FB3C2;text-decoration:none;margin-bottom:22px;}
+  .back:hover{color:#fff;}
+  .eyebrow-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+  .course-code{font-family:"IBM Plex Mono",monospace;font-size:13px;color:#C9B98C;border:1px solid rgba(201,185,140,.45);border-radius:3px;padding:3px 9px;}
+  .doc-type{font-size:14px;color:#9FB3C2;}
+  header.cover h1{font-size:clamp(30px,4.6vw,46px);line-height:1.1;max-width:20ch;color:#fff;}
+  .cover-sub{margin-top:14px;font-size:17px;color:#C7D3DA;max-width:56ch;}
+  .cover-meta{margin-top:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:1px solid rgba(255,255,255,.18);}
+  .cover-meta div{padding:14px 20px 0;border-left:1px solid rgba(255,255,255,.18);}
+  .cover-meta div:first-child{border-left:none;padding-left:0;}
+  .cover-meta .label{font-size:12px;color:#8EA2B1;margin-bottom:2px;}
+  .cover-meta .value{font-size:15px;color:#F2EEE3;font-weight:500;}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
+  .section-num{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--kraft);}
+  section h2{font-size:26px;}
+  section h3{font-size:19px;margin:28px 0 8px;}
+  p{max-width:72ch;margin:0 0 12px;}
+  .lede{color:var(--ink-soft);font-size:17px;}
+  ul.plain,ol.plain{max-width:72ch;padding-left:20px;margin:0 0 12px;}
+  ul.plain li,ol.plain li{margin-bottom:6px;}
+
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:4px;margin:8px 0 16px;}
+  table{width:100%;border-collapse:collapse;background:var(--paper-raised);min-width:640px;}
+  th{background:var(--navy-deep);color:#F2EEE3;font-weight:500;font-size:13px;text-align:left;padding:10px 14px;}
+  td{padding:12px 14px;border-top:1px solid var(--line);font-size:14.5px;vertical-align:top;}
+  tr:nth-child(even) td{background:#EFEADC;}
+  td.mono,td code{font-family:"IBM Plex Mono",monospace;font-size:13px;}
+  td.score{font-weight:600;color:var(--kraft);white-space:nowrap;}
+
+  pre{background:var(--navy-deep);color:#E6EDF1;border-radius:4px;padding:16px 18px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;margin:8px 0 16px;max-width:760px;}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:#E7E1CF;padding:1px 5px;border-radius:3px;}
+  pre code{background:none;padding:0;font-size:inherit;}
+  .cm{color:#8EA2B1;}
+
+  .flow{list-style:none;margin:0;padding:0;max-width:820px;border:1px solid var(--line-strong);border-radius:4px;background:var(--paper-raised);}
+  .flow li{display:flex;gap:18px;padding:16px 20px;border-top:1px solid var(--line);}
+  .flow li:first-child{border-top:none;}
+  .flow .no{flex:0 0 28px;font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:22px;line-height:1.2;color:var(--kraft);}
+  .flow strong{display:block;color:var(--navy-deep);}
+  .flow span.d{font-size:14.5px;color:var(--ink-soft);}
+
+  h4{font-family:"IBM Plex Sans",sans-serif;font-size:16px;font-weight:600;color:var(--navy-deep);margin:22px 0 6px;}
+  h4 code{font-size:.9em;}
+  .box{max-width:72ch;border-left:3px solid var(--stamp);background:var(--paper-raised);padding:14px 18px;margin:16px 0;font-size:15px;}
+  .box strong{color:var(--stamp);}
+  footer{padding:36px 0 56px;text-align:center;color:var(--ink-soft);font-size:13.5px;}
+  footer a{margin:0 10px;}
+
+  .sistem{display:flex;flex-wrap:wrap;align-items:stretch;max-width:900px;margin:12px 0 20px;}
+  .sistem .node{flex:1 1 150px;background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:4px;padding:12px 14px;}
+  .sistem .node b{display:block;font-family:"Fraunces",Georgia,serif;color:var(--navy-deep);font-size:16px;margin-bottom:2px;}
+  .sistem .node span{font-size:13.5px;color:var(--ink-soft);}
+  .sistem .panah{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:var(--kraft);font-size:20px;}
+
+  ul.check{list-style:none;padding-left:0;}
+  ul.check li{padding-left:26px;position:relative;}
+  ul.check li::before{content:"☐";position:absolute;left:0;color:var(--kraft);}
+  .rubrik td{font-size:13.5px;}
+  .rubrik td:first-child{min-width:150px;}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap cover-inner">
+    <a class="back" href="index.html">← Kembali ke RPS</a>
+    <div class="eyebrow-row">
+      <span class="course-code">MDD · Proyek Akhir</span>
+      <span class="doc-type">Ketentuan &amp; Penilaian</span>
+    </div>
+    <h1>Proyek Akhir: Sistem Manajemen Dokumen Digital</h1>
+    <p class="cover-sub">Membangun satu sistem terintegrasi yang mengotomasi seluruh tahap siklus hidup dokumen untuk studi kasus kelompok Anda, lalu mendemonstrasikannya pada UAS.</p>
+    <div class="cover-meta">
+      <div><div class="label">Bentuk</div><div class="value">Proyek kelompok</div></div>
+      <div><div class="label">Pelaksanaan</div><div class="value">Demo &amp; presentasi (UAS)</div></div>
+      <div><div class="label">Bobot</div><div class="value">30% nilai akhir</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="gambaran">
+    <div class="section-head"><span class="section-num">A</span><h2>Gambaran Proyek</h2></div>
+    <p class="lede">Proyek akhir adalah muara dari seluruh tugas mingguan. Setiap tugas mingguan menghasilkan satu bagian sistem, dan proyek akhir menyatukan semuanya menjadi satu sistem yang berjalan utuh.</p>
+    <p>Kelompok Anda membangun sistem manajemen dokumen digital untuk organisasi atau unit studi kasus yang dipilih di sesi 1. Sistem ini memakai Google Workspace (Form, Drive, Sheets, Gmail) dan Google Apps Script, serta mengotomasi tahap-tahap berikut:</p>
+    <div class="sistem">
+      <div class="node"><b>Terima &amp; catat</b><span>Form → buku agenda</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Klasifikasi</b><span>Kode, nomor arsip, metadata</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Nama &amp; simpan</b><span>Penamaan dan folder otomatis</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Cari</b><span>Web App pencarian</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Distribusi</b><span>Akses, notifikasi, log akses</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Retensi &amp; musnah</b><span>Usulan, persetujuan, pencatatan</span></div>
+    </div>
+    <h3>Tujuan</h3>
+    <ol class="plain">
+      <li>Menerapkan konsep siklus hidup dokumen pada sistem yang benar-benar berjalan.</li>
+      <li>Mengintegrasikan seluruh modul otomasi GAS menjadi satu alur end-to-end.</li>
+      <li>Mendokumentasikan dan mempresentasikan rancangan serta hasil kerja secara profesional.</li>
+    </ol>
+  </section>
+
+  <section id="ketentuan">
+    <div class="section-head"><span class="section-num">B</span><h2>Ketentuan Umum</h2></div>
+    <ul class="plain">
+      <li><b>Kelompok.</b> Tiap kelompok beranggota 3–4 orang, sama dengan kelompok studi kasus di sesi 1. Perubahan anggota atau studi kasus harus disetujui dosen.</li>
+      <li><b>Studi kasus.</b> Berupa organisasi atau unit nyata maupun skenario realistis, dengan jenis dokumen yang cukup kaya untuk melewati seluruh tahap siklus.</li>
+      <li><b>Teknologi.</b> Google Workspace dan Google Apps Script. Platform lain boleh dipakai sebagai pelengkap, tetapi inti otomasi harus di GAS.</li>
+      <li><b>Data uji.</b> Gunakan dokumen fiktif atau yang sudah dianonimkan. Dilarang memakai dokumen asli yang memuat data pribadi atau rahasia organisasi.</li>
+      <li><b>Akses untuk penilaian.</b> Berikan akses lihat kepada dosen untuk Form, Spreadsheet, folder arsip, proyek skrip, dan tautan Web App. Sistem yang tidak dapat diakses tidak dapat dinilai.</li>
+      <li><b>Pembagian peran.</b> Setiap anggota memegang peran yang jelas dan mencatatnya di laporan progres serta catatan kontribusi.</li>
+      <li><b>Laporan progres.</b> Laporan progres kelompok yang diperbarui di tiap sesi menjadi bahan pemantauan proyek dan lampiran laporan teknis.</li>
+    </ul>
+  </section>
+
+  <section id="ruang-lingkup">
+    <div class="section-head"><span class="section-num">C</span><h2>Ruang Lingkup Sistem</h2></div>
+
+    <h3>Fitur wajib</h3>
+    <p>Setiap tahap berikut harus ada dan berjalan otomatis pada sistem Anda.</p>
+    <div class="table-scroll">
+      <table style="min-width:680px">
+        <thead><tr><th>Tahap</th><th>Fitur minimal</th></tr></thead>
+        <tbody>
+          <tr><td>Penerimaan &amp; pencatatan</td><td>Form penerimaan dengan unggah file; data tercatat otomatis di buku agenda melalui trigger <code>onFormSubmit</code></td></tr>
+          <tr><td>Klasifikasi &amp; metadata</td><td>Skema klasifikasi minimal empat kategori; kode dan nomor arsip otomatis; metadata tersimpan di deskripsi file</td></tr>
+          <tr><td>Penamaan &amp; penyimpanan</td><td>Penamaan file otomatis sesuai konvensi; struktur folder terbentuk otomatis tanpa folder ganda</td></tr>
+          <tr><td>Pencarian</td><td>Web App yang ter-deploy, dengan pencarian dokumen berdasarkan minimal dua kriteria metadata (misalnya kategori, kata kunci perihal, atau rentang tanggal)</td></tr>
+          <tr><td>Distribusi &amp; pengamanan</td><td>Pengaturan akses sesuai peran (minimal dua peran); dokumen tidak dibuka untuk umum tanpa alasan; notifikasi email otomatis (<code>GmailApp</code>) kepada pihak terkait saat dokumen didistribusikan; log akses atau audit trail yang mencatat siapa, kapan, dan dokumen apa</td></tr>
+          <tr><td>Retensi &amp; pemusnahan</td><td>Penandaan masa retensi atau status dokumen; laporan usulan pemusnahan; pemusnahan hanya setelah persetujuan; semua tindakan tercatat</td></tr>
+          <tr><td>Integrasi</td><td>Seluruh tahap terhubung dalam satu alur yang dimulai dari satu pintu masuk, tanpa perlu menjalankan fungsi secara manual</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Fitur pilihan (nilai tambah)</h3>
+    <p>Tidak wajib, tetapi membantu mencapai kategori "Sangat baik" pada kriteria integrasi dan rancangan.</p>
+    <ul class="plain">
+      <li>Dashboard statistik dokumen (jumlah per kategori, per bulan, dan sebagainya) sebagai pelengkap Web App pencarian, yang tetap menjadi antarmuka utama sistem.</li>
+      <li>Akses berbatas waktu (expiry akses) yang dicabut otomatis oleh trigger terjadwal.</li>
+      <li>Backup berkala dan deteksi dokumen duplikat.</li>
+      <li>Pencegahan benturan data dengan <code>LockService</code>.</li>
+    </ul>
+  </section>
+
+  <section id="luaran">
+    <div class="section-head"><span class="section-num">D</span><h2>Luaran yang Dikumpulkan</h2></div>
+    <p class="lede">Setiap kelompok mengumpulkan enam hal berikut. Jadwal dan tenggat pengumpulan diumumkan oleh dosen pengampu.</p>
+    <ul class="check">
+      <li><b>Sistem yang berjalan:</b> tautan Form, Spreadsheet, folder arsip, dan Web App, dengan akses diberikan kepada dosen.</li>
+      <li><b>Source code:</b> tautan proyek skrip (akses lihat), dengan kode berkomentar.</li>
+      <li><b>Laporan teknis singkat</b> (maksimal 10 halaman), dengan susunan di bawah.</li>
+      <li><b>Laporan progres kelompok</b> yang sudah akumulatif dari seluruh sesi.</li>
+      <li><b>Slide presentasi</b> (maksimal 10 slide).</li>
+      <li><b>Catatan kontribusi anggota:</b> tugas tiap anggota dan persentase kontribusinya.</li>
+    </ul>
+
+    <h3>Susunan laporan teknis</h3>
+    <ol class="plain">
+      <li>Profil organisasi studi kasus dan masalah pengelolaan dokumen yang diselesaikan.</li>
+      <li>Skema klasifikasi, konvensi penamaan, dan struktur folder.</li>
+      <li>Arsitektur dan alur otomasi, disertai diagram.</li>
+      <li>Daftar trigger, layanan GAS, dan fungsi utama beserta kegunaannya.</li>
+      <li>Pengamanan akses, notifikasi, log akses, dan kebijakan retensi yang dipakai.</li>
+      <li>Hasil pengujian: tabel skenario uji, hasil yang diharapkan, hasil aktual, dan status.</li>
+      <li>Kendala yang dihadapi dan rencana pengembangan lanjutan.</li>
+      <li>Lampiran: panduan penggunaan singkat dan pembagian tugas.</li>
+    </ol>
+  </section>
+
+  <section id="pelaksanaan">
+    <div class="section-head"><span class="section-num">E</span><h2>Pelaksanaan Demo &amp; Presentasi</h2></div>
+    <p>Setiap kelompok tampil sesuai urutan yang diumumkan dosen. Format tampil: presentasi arsitektur dan alur otomasi sekitar 5 menit, demo langsung sekitar 10 menit, lalu tanya jawab 5–10 menit. Seluruh anggota harus hadir dan siap menjawab.</p>
+
+    <h3>Skenario demo wajib</h3>
+    <ol class="plain">
+      <li>Kirim satu dokumen baru melalui Form secara langsung di hadapan penguji.</li>
+      <li>Tunjukkan hasil otomatisnya: baris di buku agenda, nama file baru, folder tujuan, dan deskripsi metadata.</li>
+      <li>Cari dokumen tersebut lewat Web App.</li>
+      <li>Bagikan akses sesuai peran dan tunjukkan perbedaan akses antarperan, email notifikasi yang terkirim, serta catatan akses di log.</li>
+      <li>Tunjukkan dokumen uji yang masa retensinya sudah habis muncul dalam laporan usulan pemusnahan.</li>
+      <li>Jalankan persetujuan, lalu tunjukkan pemusnahan dan pencatatannya.</li>
+    </ol>
+    <div class="box"><strong>Siapkan cadangan:</strong> siapkan data uji dan rekaman layar skenario di atas untuk berjaga-jaga bila koneksi atau layanan Google bermasalah saat demo.</div>
+  </section>
+
+  <section id="penilaian">
+    <div class="section-head"><span class="section-num">F</span><h2>Penilaian</h2></div>
+    <p class="lede">Proyek akhir dinilai dengan skala 0–100, lalu dikalikan bobot UAS sebesar 30% pada nilai akhir mata kuliah.</p>
+
+    <h3>Komponen dan bobot</h3>
+    <div class="table-scroll">
+      <table style="min-width:560px">
+        <thead><tr><th>Kriteria</th><th>Bobot</th><th>Jenis nilai</th></tr></thead>
+        <tbody>
+          <tr><td>1. Integrasi &amp; fungsionalitas sistem</td><td class="score">25</td><td>Kelompok</td></tr>
+          <tr><td>2. Kualitas rancangan</td><td class="score">15</td><td>Kelompok</td></tr>
+          <tr><td>3. Antarmuka &amp; kemudahan pakai</td><td class="score">10</td><td>Kelompok</td></tr>
+          <tr><td>4. Kualitas kode &amp; keamanan</td><td class="score">10</td><td>Kelompok</td></tr>
+          <tr><td>5. Dokumentasi teknis</td><td class="score">10</td><td>Kelompok</td></tr>
+          <tr><td>6. Presentasi &amp; demo</td><td class="score">10</td><td>Kelompok</td></tr>
+          <tr><td>7. Penguasaan materi (tanya jawab)</td><td class="score">20</td><td>Individu</td></tr>
+          <tr><td><b>Total</b></td><td class="score">100</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Rubrik per kriteria</h3>
+    <div class="table-scroll rubrik">
+      <table style="min-width:960px">
+        <thead><tr><th>Kriteria</th><th>Sangat baik (85–100)</th><th>Baik (70–84)</th><th>Cukup (55–69)</th><th>Kurang (&lt;55)</th></tr></thead>
+        <tbody>
+          <tr><td>1. Integrasi &amp; fungsionalitas (25)</td><td>Semua tahap wajib, termasuk notifikasi email dan log akses, berjalan otomatis end-to-end dari satu pintu masuk; hasil selalu tepat; ada fitur pilihan yang bekerja</td><td>Semua tahap wajib ada, termasuk notifikasi dan log akses; satu atau dua langkah masih manual atau sesekali galat</td><td>Sebagian tahap berjalan, atau notifikasi dan log akses belum ada; integrasi antarmodul belum utuh</td><td>Modul berdiri sendiri, banyak yang tidak berjalan, atau demo gagal</td></tr>
+          <tr><td>2. Kualitas rancangan (15)</td><td>Skema klasifikasi logis dan saling lepas; konvensi penamaan konsisten; struktur folder selaras; semuanya sesuai kebutuhan studi kasus</td><td>Rancangan logis dan konsisten dengan sedikit ketidaksesuaian</td><td>Rancangan ada tetapi sebagian tumpang tindih atau kurang sesuai studi kasus</td><td>Rancangan tidak jelas atau tidak dipakai dalam sistem</td></tr>
+          <tr><td>3. Antarmuka &amp; kemudahan pakai (10)</td><td>Antarmuka rapi dan jelas; pengguna awam dapat memakainya tanpa petunjuk; ada umpan balik dan pesan galat yang informatif</td><td>Antarmuka berfungsi dan cukup jelas dengan sedikit kebingungan</td><td>Antarmuka berfungsi tetapi membingungkan atau tidak konsisten</td><td>Antarmuka sulit dipakai atau tidak ada</td></tr>
+          <tr><td>4. Kualitas kode &amp; keamanan (10)</td><td>Kode terstruktur dalam fungsi kecil, berkomentar jelas, ada penanganan galat; akses dibatasi sesuai peran; tidak ada data sensitif tersebar</td><td>Kode terbaca dan berkomentar; penanganan galat dan pengamanan cukup</td><td>Kode berjalan tetapi sulit dibaca atau minim komentar; pengamanan minim</td><td>Kode berantakan, tanpa komentar, atau membuka akses tanpa batas</td></tr>
+          <tr><td>5. Dokumentasi teknis (10)</td><td>Lengkap sesuai susunan; diagram alur jelas; hasil uji terdokumentasi; panduan dapat diikuti pihak lain</td><td>Lengkap dengan beberapa bagian kurang rinci</td><td>Ada tetapi banyak bagian tidak lengkap atau tanpa hasil uji</td><td>Sangat minim atau tidak dikumpulkan</td></tr>
+          <tr><td>6. Presentasi &amp; demo (10)</td><td>Runtut, demo lancar sesuai skenario wajib, waktu tepat, pembagian peran jelas</td><td>Cukup runtut; demo hampir semua skenario berjalan</td><td>Kurang runtut atau demo hanya sebagian skenario</td><td>Tidak runtut, melewati banyak skenario, atau tidak siap</td></tr>
+          <tr><td>7. Penguasaan materi (20, individu)</td><td>Menjelaskan kode, alur siklus dokumen, dan keputusan rancangan dengan tepat dan mandiri</td><td>Menjelaskan sebagian besar dengan benar, sesekali perlu bantuan</td><td>Hanya menjelaskan bagian yang dikerjakan sendiri atau sering ragu</td><td>Tidak dapat menjelaskan sistem yang dikumpulkan</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Cara menghitung nilai</h3>
+    <ul class="plain">
+      <li><b>Nilai kelompok</b> (kriteria 1–6, total 80 poin) berlaku sama untuk seluruh anggota.</li>
+      <li><b>Nilai individu</b> (kriteria 7, 20 poin) diberikan terpisah berdasarkan tanya jawab.</li>
+      <li><b>Penyesuaian kontribusi.</b> Bila catatan kontribusi dan penilaian sejawat menunjukkan perbedaan kontribusi yang besar, dosen dapat menyesuaikan nilai kelompok anggota yang bersangkutan.</li>
+      <li><b>Nilai akhir mata kuliah</b> = 70% rata-rata nilai tugas mingguan + 30% nilai proyek akhir.</li>
+    </ul>
+    <div class="box"><strong>Contoh:</strong> sebuah kelompok memperoleh 68 dari 80 poin untuk kriteria 1–6. Seorang anggota memperoleh 16 dari 20 poin pada penguasaan materi. Nilai proyek anggota tersebut 68 + 16 = 84, sehingga kontribusinya pada nilai akhir mata kuliah adalah 84 × 30% = 25,2 poin.</div>
+  </section>
+
+  <section id="integritas">
+    <div class="section-head"><span class="section-num">G</span><h2>Integritas &amp; Ketentuan Lain</h2></div>
+    <ul class="plain">
+      <li><b>Orisinalitas.</b> Kode dan dokumen harus hasil kerja kelompok sendiri. Menyalin sistem kelompok lain atau sumber luar tanpa memahaminya dikenai sanksi sesuai peraturan akademik.</li>
+      <li><b>Penggunaan AI.</b> Asisten AI boleh dipakai untuk belajar, memahami kode, dan memperbaiki error. Setiap anggota tetap harus mampu menjelaskan kode dan alur sistem dengan kata-katanya sendiri. Kode yang tidak dapat dijelaskan akan memengaruhi nilai penguasaan materi.</li>
+      <li><b>Kutipan sumber.</b> Contoh kode atau gagasan dari dokumentasi atau sumber lain dicantumkan sebagai referensi di laporan teknis.</li>
+      <li><b>Keterlambatan.</b> Pengumpulan yang melewati tenggat dikenai pengurangan nilai sesuai pengumuman dosen.</li>
+      <li><b>Kendala teknis.</b> Kendala akses atau layanan yang terjadi saat demo harus segera dilaporkan. Rekaman layar cadangan dapat dipertimbangkan sebagai pengganti sebagian demo.</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <a href="index.html">← Kembali ke RPS</a>
+  <div style="margin-top:10px;">Manajemen Dokumen Digital — Philipus Suryo Subandoro</div>
+</footer>
+
+</body>
+</html>
