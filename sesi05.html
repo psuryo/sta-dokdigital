@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sesi 5 — Pencarian &amp; Dashboard Web App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EEE3; --paper-raised:#FAF8F2; --ink:#22262B; --ink-soft:#585B52;
+    --navy:#1E3A52; --navy-deep:#13293D; --kraft:#9C6B30; --stamp:#A6402B; --sage:#4E6F5C;
+    --line:#D9D2C0; --line-strong:#C3B99E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;}
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:600;color:var(--navy-deep);margin:0;}
+  a{color:var(--navy);}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+  header.cover{background:var(--navy-deep);color:var(--paper-raised);padding:48px 0 40px;position:relative;overflow:hidden;}
+  header.cover::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,.035) 0 1px,transparent 1px 28px);pointer-events:none;}
+  .cover-inner{position:relative;}
+  .back{display:inline-block;font-size:14px;color:#9FB3C2;text-decoration:none;margin-bottom:22px;}
+  .back:hover{color:#fff;}
+  .eyebrow-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+  .course-code{font-family:"IBM Plex Mono",monospace;font-size:13px;color:#C9B98C;border:1px solid rgba(201,185,140,.45);border-radius:3px;padding:3px 9px;}
+  .doc-type{font-size:14px;color:#9FB3C2;}
+  header.cover h1{font-size:clamp(30px,4.6vw,46px);line-height:1.1;max-width:20ch;color:#fff;}
+  .cover-sub{margin-top:14px;font-size:17px;color:#C7D3DA;max-width:56ch;}
+  .cover-meta{margin-top:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:1px solid rgba(255,255,255,.18);}
+  .cover-meta div{padding:14px 20px 0;border-left:1px solid rgba(255,255,255,.18);}
+  .cover-meta div:first-child{border-left:none;padding-left:0;}
+  .cover-meta .label{font-size:12px;color:#8EA2B1;margin-bottom:2px;}
+  .cover-meta .value{font-size:15px;color:#F2EEE3;font-weight:500;}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
+  .section-num{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--kraft);}
+  section h2{font-size:26px;}
+  section h3{font-size:19px;margin:28px 0 8px;}
+  p{max-width:72ch;margin:0 0 12px;}
+  .lede{color:var(--ink-soft);font-size:17px;}
+  ul.plain,ol.plain{max-width:72ch;padding-left:20px;margin:0 0 12px;}
+  ul.plain li,ol.plain li{margin-bottom:6px;}
+
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:4px;margin:8px 0 16px;}
+  table{width:100%;border-collapse:collapse;background:var(--paper-raised);min-width:640px;}
+  th{background:var(--navy-deep);color:#F2EEE3;font-weight:500;font-size:13px;text-align:left;padding:10px 14px;}
+  td{padding:12px 14px;border-top:1px solid var(--line);font-size:14.5px;vertical-align:top;}
+  tr:nth-child(even) td{background:#EFEADC;}
+  td.mono,td code{font-family:"IBM Plex Mono",monospace;font-size:13px;}
+  td.score{font-weight:600;color:var(--kraft);white-space:nowrap;}
+
+  pre{background:var(--navy-deep);color:#E6EDF1;border-radius:4px;padding:16px 18px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;margin:8px 0 16px;max-width:760px;}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:#E7E1CF;padding:1px 5px;border-radius:3px;}
+  pre code{background:none;padding:0;font-size:inherit;}
+  .cm{color:#8EA2B1;}
+
+  .flow{list-style:none;margin:0;padding:0;max-width:820px;border:1px solid var(--line-strong);border-radius:4px;background:var(--paper-raised);}
+  .flow li{display:flex;gap:18px;padding:16px 20px;border-top:1px solid var(--line);}
+  .flow li:first-child{border-top:none;}
+  .flow .no{flex:0 0 28px;font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:22px;line-height:1.2;color:var(--kraft);}
+  .flow strong{display:block;color:var(--navy-deep);}
+  .flow span.d{font-size:14.5px;color:var(--ink-soft);}
+
+  h4{font-family:"IBM Plex Sans",sans-serif;font-size:16px;font-weight:600;color:var(--navy-deep);margin:22px 0 6px;}
+  h4 code{font-size:.9em;}
+  .box{max-width:72ch;border-left:3px solid var(--stamp);background:var(--paper-raised);padding:14px 18px;margin:16px 0;font-size:15px;}
+  .box strong{color:var(--stamp);}
+  footer{padding:36px 0 56px;text-align:center;color:var(--ink-soft);font-size:13.5px;}
+  footer a{margin:0 10px;}
+
+  .sistem{display:flex;flex-wrap:wrap;align-items:stretch;max-width:900px;margin:12px 0 20px;}
+  .sistem .node{flex:1 1 150px;background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:4px;padding:12px 14px;}
+  .sistem .node b{display:block;font-family:"Fraunces",Georgia,serif;color:var(--navy-deep);font-size:16px;margin-bottom:2px;}
+  .sistem .node span{font-size:13.5px;color:var(--ink-soft);}
+  .sistem .panah{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:var(--kraft);font-size:20px;}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap cover-inner">
+    <a class="back" href="index.html">← Kembali ke RPS</a>
+    <div class="eyebrow-row">
+      <span class="course-code">MDD · Sesi 5</span>
+      <span class="doc-type">Pertemuan Minggu 5</span>
+    </div>
+    <h1>Pencarian &amp; Dashboard Web App</h1>
+    <p class="cover-sub">Membangun halaman web sederhana yang mencari dokumen arsip berdasarkan metadata dan isi, sehingga dokumen yang sudah tertata di sesi sebelumnya bisa ditemukan kembali dalam hitungan detik.</p>
+    <div class="cover-meta">
+      <div><div class="label">Metode</div><div class="value">Praktikum lab, live coding</div></div>
+      <div><div class="label">Bobot tugas</div><div class="value">10%</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="tujuan">
+    <div class="section-head"><span class="section-num">A</span><h2>Tujuan Pembelajaran</h2></div>
+    <p class="lede">Setelah sesi ini, Anda mampu membangun dan men-deploy Web App pencarian dokumen untuk arsip studi kasus kelompok Anda.</p>
+    <ol class="plain">
+      <li>Menjelaskan alur kerja Web App: <code>doGet()</code>, HTML Service, dan pemanggilan fungsi server dari browser.</li>
+      <li>Menulis query pencarian untuk <code>searchFiles()</code> dan membedakannya dari pencarian lewat buku agenda.</li>
+      <li>Membangun fungsi pencarian berdasarkan metadata (kata kunci, kategori, jenis, rentang tanggal) dan berdasarkan isi dokumen.</li>
+      <li>Menampilkan hasil pencarian secara aman di halaman web, lalu men-deploy-nya sebagai Web App.</li>
+    </ol>
+    <p><strong>Prasyarat:</strong> skrip sesi 2 sampai 4 sudah berjalan dan lembar <code>Agenda</code> berisi beberapa dokumen uji, karena sesi ini mencari data yang dihasilkan skrip tersebut. Baris uji dari sesi 2 dan 3 sebaiknya sudah dibersihkan (lihat tugas sesi 3 dan 4), karena baris lama tidak punya kolom Kategori, Kode Arsip, dan Nama File.</p>
+  </section>
+
+  <section id="alur">
+    <div class="section-head"><span class="section-num">B</span><h2>Alur Kegiatan</h2></div>
+    <ol class="flow">
+      <li><span class="no">1</span><div><strong>Pembukaan &amp; review sesi 4</strong><span class="d">Memeriksa hasil tugas sesi 4 dan membahas kendala pada penamaan file dan struktur folder.</span></div></li>
+      <li><span class="no">2</span><div><strong>Konsep pencarian dan Web App</strong><span class="d">Sumber pencarian, sintaks query Drive, serta cara kerja <code>doGet()</code> dan <code>google.script.run</code>.</span></div></li>
+      <li><span class="no">3</span><div><strong>Merancang antarmuka pencarian kelompok</strong><span class="d">Kelompok menentukan siapa penggunanya, filter apa yang paling dibutuhkan, dan kolom apa yang tampil pada hasil.</span></div></li>
+      <li><span class="no">4</span><div><strong>Praktikum: membangun Web App pencarian</strong><span class="d">Menulis fungsi pencarian, halaman <code>Index.html</code>, dan men-deploy-nya.</span></div></li>
+      <li><span class="no">5</span><div><strong>Uji coba, progres kelompok &amp; penutup</strong><span class="d">Mencoba pencarian dari URL Web App, memeriksa hasilnya, dan memperbarui laporan progres proyek akhir.</span></div></li>
+    </ol>
+  </section>
+
+  <section id="materi">
+    <div class="section-head"><span class="section-num">C</span><h2>Materi Pembelajaran</h2></div>
+
+    <h3>1. Mencari dokumen digital</h3>
+    <p>Arsip yang rapi baru berguna bila isinya bisa ditemukan kembali. Pada sesi 2 sampai 4, setiap dokumen sudah meninggalkan jejak di tiga tempat: baris di buku agenda, nama file dan folder, serta deskripsi file. Sesi ini memanfaatkan ketiganya.</p>
+    <div class="table-scroll">
+      <table style="min-width:700px">
+        <thead><tr><th>Sumber pencarian</th><th>Kelebihan</th><th>Keterbatasan</th></tr></thead>
+        <tbody>
+          <tr><td><b>Buku agenda (Sheets)</b></td><td>Data terstruktur sehingga bisa disaring per kategori, jenis, dan tanggal; cepat; tautan file sudah ada</td><td>Hanya menemukan apa yang sudah dicatat; isi dokumen tidak ikut terbaca</td></tr>
+          <tr><td><b>Isi dokumen (<code>fullText</code>)</b></td><td>Menemukan kata yang hanya ada di dalam dokumen</td><td>Bergantung pada indeks Drive; PDF hasil scan gambar mungkin tidak terbaca, dan file baru bisa tertunda diindeks</td></tr>
+          <tr><td><b>Nama file dan folder</b></td><td>Pola nama dari sesi 4 sudah memuat unit, jenis, tanggal, dan nomor</td><td>Pencocokan nama file di Drive tidak selalu seperti yang diharapkan (lihat catatan di bawah)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Karena itu Web App sesi ini menyediakan dua mode: <b>buku agenda</b> sebagai pencarian utama, dan <b>isi dokumen</b> sebagai pelengkap.</p>
+
+    <h3>2. Sintaks query <code>searchFiles()</code></h3>
+    <p><code>DriveApp.searchFiles(query)</code> dan <code>folder.searchFiles(query)</code> menerima satu teks query dan mengembalikan iterator file, sama seperti <code>getFiles()</code>. Query disusun dari kondisi yang dihubungkan <code>and</code>, <code>or</code>, atau <code>not</code>.</p>
+    <div class="table-scroll">
+      <table style="min-width:700px">
+        <thead><tr><th>Kondisi</th><th>Contoh</th><th>Artinya</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">title contains</td><td class="mono">title contains 'undangan'</td><td>Nama file memuat kata tersebut</td></tr>
+          <tr><td class="mono">fullText contains</td><td class="mono">fullText contains 'rapat'</td><td>Nama, deskripsi, atau isi teks file memuat kata tersebut</td></tr>
+          <tr><td class="mono">mimeType =</td><td class="mono">mimeType = 'application/pdf'</td><td>Hanya jenis file tertentu</td></tr>
+          <tr><td class="mono">modifiedDate &gt;</td><td class="mono">modifiedDate &gt; '2026-11-01T00:00:00'</td><td>Diubah setelah tanggal tertentu (format tahun-bulan-hari, lalu <code>T</code> dan jam)</td></tr>
+          <tr><td class="mono">'ID' in parents</td><td class="mono">'1AbC...' in parents</td><td>Berada langsung di folder tersebut</td></tr>
+          <tr><td class="mono">trashed =</td><td class="mono">trashed = false</td><td>Mengecualikan file di tempat sampah</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box"><strong>Dua jebakan:</strong> (1) <code>'ID' in parents</code> hanya mencakup isi langsung folder, tidak sampai subfolder. Karena arsip kita berlapis (Arsip → tahun → kategori), pencarian isi harus menelusuri folder tahun dan kategori satu per satu. (2) <code>contains</code> mencocokkan kata atau awalan kata, bukan potongan di tengah kata. Nama seperti <code>SEK_UND_20261112_UM-001.pdf</code> bisa tidak cocok dengan potongan "UND". Uji sendiri perilakunya, dan andalkan buku agenda untuk pencarian yang pasti.</div>
+    <p><b>Kata kunci dari pengguna harus di-escape.</b> Tanda kutip tunggal di kata kunci (misalnya <code>Pak Bahri's</code>) akan merusak query dan menimbulkan galat. Skrip perlu menambahkan garis miring terbalik di depannya.</p>
+
+    <h3>3. Cara kerja Web App</h3>
+    <p>Web App adalah skrip yang punya alamat URL. Saat URL dibuka, Apps Script menjalankan <code>doGet()</code> dan menampilkan halaman HTML yang dikembalikannya. Halaman itu berjalan di browser pengguna, sedangkan fungsi yang menyentuh Drive dan Sheets berjalan di server Google.</p>
+    <div class="sistem">
+      <div class="node"><b>Browser</b><span>Menampilkan <code>Index.html</code>; pengguna mengisi filter</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>google.script.run</b><span>Memanggil fungsi server dengan filter sebagai argumen</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Fungsi server</b><span>Membaca Sheets atau mencari di Drive</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Hasil</b><span>Dikirim balik ke browser dan digambar menjadi tabel</span></div>
+    </div>
+
+    <h4>Sintaks baru yang dipakai</h4>
+    <div class="table-scroll">
+      <table style="min-width:700px">
+        <thead><tr><th>Layanan</th><th>Metode</th><th>Fungsinya</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Skrip</td><td class="mono">doGet()</td><td>Fungsi khusus yang dijalankan saat URL Web App dibuka</td></tr>
+          <tr><td class="mono">HtmlService</td><td class="mono">createHtmlOutputFromFile(nama), setTitle(judul)</td><td>Menyajikan file HTML dari proyek skrip sebagai halaman web</td></tr>
+          <tr><td class="mono">Klien</td><td class="mono">google.script.run.namaFungsi(arg)</td><td>Dari browser, memanggil fungsi di server (berjalan asinkron)</td></tr>
+          <tr><td class="mono">Klien</td><td class="mono">withSuccessHandler(f), withFailureHandler(f)</td><td>Menentukan fungsi yang dijalankan saat server berhasil atau gagal</td></tr>
+          <tr><td class="mono">Folder</td><td class="mono">folder.searchFiles(query)</td><td>Mencari file yang berada langsung di folder itu</td></tr>
+          <tr><td class="mono">Object</td><td class="mono">Object.keys(objek)</td><td>Mengambil daftar nama kunci, dipakai untuk mengisi dropdown dari <code>SKEMA</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box"><strong>Data lewat <code>google.script.run</code> harus sederhana.</strong> Teks, angka, array, dan objek biasa bisa dikirim, tetapi objek <code>Date</code> tidak. Karena itu tanggal diubah menjadi teks dengan <code>Utilities.formatDate()</code> sebelum dikembalikan.</div>
+    <div class="box"><strong>Jangan memasukkan data ke halaman dengan <code>innerHTML</code>.</strong> Perihal dan pengirim berasal dari isian Form orang lain. Bila ada yang menulis kode HTML atau JavaScript di kolom itu, <code>innerHTML</code> akan menjalankannya di browser pengguna. Gunakan <code>textContent</code>, yang memperlakukan semuanya sebagai teks biasa.</div>
+
+    <h3>4. Praktikum: membangun Web App pencarian</h3>
+
+    <h4>Langkah 1. Uji <code>searchFiles()</code> di editor</h4>
+    <p>Tempel fungsi berikut, jalankan, lalu lihat log. Pencarian ini menyapu seluruh Drive, bukan hanya arsip Anda. Hasilnya menunjukkan mengapa pencarian isi nanti dibatasi pada folder arsip.</p>
+    <pre><code>function ujiPencarian() {
+  <span class="cm">// Pencarian ke seluruh Drive: semua file yang isinya memuat kata "Undangan"</span>
+  const hasil = DriveApp.searchFiles("trashed = false and fullText contains 'Undangan'");
+  let n = 0;
+  while (hasil.hasNext() &amp;&amp; n &lt; 5) {
+    const f = hasil.next();
+    Logger.log(f.getName() + " | " + f.getUrl());
+    n++;
+  }
+  Logger.log(n + " file ditampilkan");
+}</code></pre>
+
+    <h4>Langkah 2. Fungsi pencarian metadata</h4>
+    <p>Fungsi ini membaca lembar <code>Agenda</code>, menyaring barisnya, dan mengembalikan paling banyak 50 hasil, terbaru lebih dulu. Urutan kolom mengikuti <code>appendRow</code> di sesi 4; bila lembar Anda berbeda, sesuaikan urutan nama pada baris <code>const [...] = data[i]</code>.</p>
+    <pre><code>const BATAS_HASIL = 50;
+
+<span class="cm">// Mencari di buku agenda. Mengembalikan array objek berisi teks saja.</span>
+function cariMetadata(filter) {
+  const kata = (filter.kata || "").trim().toLowerCase();
+  const sheet = SpreadsheetApp.openById(ID_SPREADSHEET).getSheetByName("Agenda");
+  const data = sheet.getDataRange().getValues();
+  const hasil = [];
+
+  for (let i = data.length - 1; i &gt;= 1; i--) {   <span class="cm">// dari baris terbaru; baris 0 = judul kolom</span>
+    <span class="cm">// urutan sama dengan appendRow pada sesi 4</span>
+    const [noAgenda, tglTerima, nomorSurat, pengirim, perihal, jenis,
+           tautan, kategori, kodeArsip, namaFile] = data[i];
+
+    <span class="cm">// Date tidak bisa dikirim ke browser, jadi diubah menjadi teks</span>
+    const tgl = tglTerima instanceof Date
+      ? Utilities.formatDate(tglTerima, "Asia/Jakarta", "yyyy-MM-dd")
+      : String(tglTerima);
+
+    if (filter.kategori &amp;&amp; kategori !== filter.kategori) continue;
+    if (filter.jenis &amp;&amp; jenis !== filter.jenis) continue;
+    if (filter.dari &amp;&amp; tgl &lt; filter.dari) continue;
+    if (filter.sampai &amp;&amp; tgl &gt; filter.sampai) continue;
+
+    const gabungan = [nomorSurat, pengirim, perihal, kodeArsip, namaFile].join(" ").toLowerCase();
+    if (kata &amp;&amp; gabungan.indexOf(kata) === -1) continue;
+
+    hasil.push({
+      kode: String(kodeArsip || ""),      // baris lama (sesi 2–3) belum punya kolom ini
+      nama: String(namaFile || ""),
+      kategori: String(kategori || ""),
+      tanggal: tgl,
+      keterangan: pengirim + " — " + perihal,
+      tautan: String(tautan || "")
+    });
+    if (hasil.length &gt;= BATAS_HASIL) break;
+  }
+  return hasil;
+}
+
+function ujiMetadata() {
+  Logger.log(JSON.stringify(cariMetadata({ kata: "rapat" }), null, 2));
+}</code></pre>
+
+    <h4>Langkah 3. Fungsi pencarian isi dokumen</h4>
+    <p>Fungsi ini menelusuri folder tahun dan kategori, lalu memanggil <code>searchFiles()</code> pada tiap folder kategori. Kode arsip diambil dari deskripsi file yang diisi pada sesi 3.</p>
+    <pre><code><span class="cm">// Mencari kata di dalam isi dokumen, hanya pada folder arsip</span>
+function cariIsi(filter) {
+  const kata = (filter.kata || "").trim();
+  if (!kata) {
+    throw new Error("Isi kata kunci untuk pencarian isi dokumen.");
+  }
+  <span class="cm">// tanda kutip dan garis miring dalam kata kunci harus di-escape agar query tidak rusak</span>
+  const aman = kata.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+  const query = "trashed = false and fullText contains '" + aman + "'";
+
+  const hasil = [];
+  const folderTahun = DriveApp.getFolderById(ID_FOLDER_ARSIP).getFolders();
+  while (folderTahun.hasNext()) {
+    const tahun = folderTahun.next();
+    const folderKategori = tahun.getFolders();
+    while (folderKategori.hasNext()) {
+      const kat = folderKategori.next();
+      if (filter.kategori &amp;&amp; kat.getName() !== filter.kategori) continue;
+
+      const files = kat.searchFiles(query);
+      while (files.hasNext() &amp;&amp; hasil.length &lt; BATAS_HASIL) {
+        const f = files.next();
+        const deskripsi = f.getDescription() || "";
+        const cocok = deskripsi.match(/Kode arsip: (\S+)/);
+        hasil.push({
+          kode: cocok ? cocok[1] : "",
+          nama: f.getName(),
+          kategori: kat.getName(),
+          tanggal: Utilities.formatDate(f.getDateCreated(), "Asia/Jakarta", "yyyy-MM-dd"),
+          keterangan: deskripsi,
+          tautan: f.getUrl()
+        });
+      }
+    }
+  }
+  return hasil;
+}</code></pre>
+
+    <h4>Langkah 4. <code>doGet()</code> dan halaman <code>Index.html</code></h4>
+    <p>Tambahkan <code>doGet()</code> dan <code>ambilOpsiFilter()</code> ke berkas skrip. Dropdown kategori dan jenis diisi dari <code>SKEMA</code> dan <code>SINGKATAN_JENIS</code>, sehingga otomatis ikut bila skema Anda berubah.</p>
+    <pre><code><span class="cm">// Dijalankan saat URL Web App dibuka di browser</span>
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile("Index")
+    .setTitle("Pencarian Arsip Surat Masuk");
+}
+
+<span class="cm">// Mengisi pilihan dropdown dari konstanta yang sudah ada</span>
+function ambilOpsiFilter() {
+  return {
+    kategori: Object.keys(SKEMA),
+    jenis: Object.keys(SINGKATAN_JENIS)
+  };
+}</code></pre>
+    <p>Lalu buat berkas HTML: tombol <b>+</b> di samping Files, pilih <b>HTML</b>, beri nama <code>Index</code> (tanpa ekstensi), dan ganti seluruh isinya dengan kode berikut.</p>
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="id"&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+&lt;style&gt;
+  body{font-family:system-ui,sans-serif;margin:0;padding:24px;background:#F2EEE3;color:#22262B;}
+  h1{font-size:22px;color:#13293D;margin:0 0 16px;}
+  .filter{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;max-width:900px;}
+  label{display:block;font-size:13px;color:#585B52;margin-bottom:3px;}
+  input,select{width:100%;padding:8px;border:1px solid #C3B99E;border-radius:4px;font-size:14px;background:#FAF8F2;}
+  button{margin-top:14px;padding:9px 20px;background:#13293D;color:#fff;border:0;border-radius:4px;cursor:pointer;}
+  button:disabled{opacity:.5;}
+  #status{margin:14px 0 8px;font-size:14px;color:#585B52;}
+  .scroll{overflow-x:auto;}
+  table{border-collapse:collapse;width:100%;background:#FAF8F2;}
+  th,td{text-align:left;padding:8px 10px;border-top:1px solid #D9D2C0;font-size:13.5px;vertical-align:top;}
+  th{background:#13293D;color:#fff;font-weight:500;}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Pencarian Arsip Surat Masuk&lt;/h1&gt;
+
+&lt;div class="filter"&gt;
+  &lt;div&gt;&lt;label for="mode"&gt;Cari di&lt;/label&gt;
+    &lt;select id="mode"&gt;
+      &lt;option value="metadata"&gt;Buku agenda (metadata)&lt;/option&gt;
+      &lt;option value="isi"&gt;Isi dokumen (Drive)&lt;/option&gt;
+    &lt;/select&gt;&lt;/div&gt;
+  &lt;div&gt;&lt;label for="kata"&gt;Kata kunci&lt;/label&gt;&lt;input id="kata" type="text"&gt;&lt;/div&gt;
+  &lt;div&gt;&lt;label for="kategori"&gt;Kategori&lt;/label&gt;
+    &lt;select id="kategori"&gt;&lt;option value=""&gt;Semua&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+  &lt;div&gt;&lt;label for="jenis"&gt;Jenis surat&lt;/label&gt;
+    &lt;select id="jenis"&gt;&lt;option value=""&gt;Semua&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;
+  &lt;div&gt;&lt;label for="dari"&gt;Dari tanggal&lt;/label&gt;&lt;input id="dari" type="date"&gt;&lt;/div&gt;
+  &lt;div&gt;&lt;label for="sampai"&gt;Sampai tanggal&lt;/label&gt;&lt;input id="sampai" type="date"&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;button id="tombol" onclick="cari()"&gt;Cari&lt;/button&gt;
+&lt;div id="status"&gt;&lt;/div&gt;
+
+&lt;div class="scroll"&gt;&lt;table&gt;
+  &lt;thead&gt;&lt;tr&gt;&lt;th&gt;Kode&lt;/th&gt;&lt;th&gt;Nama File&lt;/th&gt;&lt;th&gt;Kategori&lt;/th&gt;&lt;th&gt;Tanggal&lt;/th&gt;&lt;th&gt;Keterangan&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+  &lt;tbody id="hasil"&gt;&lt;/tbody&gt;
+&lt;/table&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  const $ = function (id) { return document.getElementById(id); };
+
+  window.addEventListener("load", function () {
+    google.script.run.withSuccessHandler(isiOpsi).withFailureHandler(tampilGalat).ambilOpsiFilter();
+  });
+
+  function isiOpsi(opsi) {
+    tambahOpsi($("kategori"), opsi.kategori);
+    tambahOpsi($("jenis"), opsi.jenis);
+  }
+
+  function tambahOpsi(select, daftar) {
+    daftar.forEach(function (nilai) {
+      const o = document.createElement("option");
+      o.value = nilai;
+      o.textContent = nilai;
+      select.appendChild(o);
+    });
+  }
+
+  function cari() {
+    const filter = {
+      kata: $("kata").value, kategori: $("kategori").value, jenis: $("jenis").value,
+      dari: $("dari").value, sampai: $("sampai").value
+    };
+    $("status").textContent = "Mencari...";
+    $("tombol").disabled = true;
+    const run = google.script.run.withSuccessHandler(tampilHasil).withFailureHandler(tampilGalat);
+    if ($("mode").value === "isi") { run.cariIsi(filter); } else { run.cariMetadata(filter); }
+  }
+
+  function tampilHasil(daftar) {
+    const tbody = $("hasil");
+    tbody.textContent = "";
+    daftar.forEach(function (d) {
+      const tr = document.createElement("tr");
+      [d.kode, d.nama, d.kategori, d.tanggal, d.keterangan].forEach(function (teks) {
+        const td = document.createElement("td");
+        td.textContent = teks;          <span class="cm">// textContent, bukan innerHTML</span>
+        tr.appendChild(td);
+      });
+      const tdLink = document.createElement("td");
+      if (d.tautan.indexOf("https://drive.google.com/") === 0) {
+        const a = document.createElement("a");
+        a.href = d.tautan; a.target = "_blank"; a.textContent = "Buka";
+        tdLink.appendChild(a);
+      }
+      tr.appendChild(tdLink);
+      tbody.appendChild(tr);
+    });
+    $("status").textContent = daftar.length + " dokumen ditemukan" +
+      (daftar.length &gt;= 50 ? " (ditampilkan maksimal 50)" : "");
+    $("tombol").disabled = false;
+  }
+
+  function tampilGalat(err) {
+    $("status").textContent = "Terjadi galat: " + err.message;
+    $("tombol").disabled = false;
+  }
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    <p>Filter jenis surat dan tanggal hanya berlaku pada mode buku agenda. Pada mode isi dokumen, yang dipakai adalah kata kunci dan kategori.</p>
+
+    <h4>Langkah 5. Deploy sebagai Web App</h4>
+    <ol class="plain">
+      <li>Jalankan <code>ujiMetadata</code> sekali dari editor dan setujui izin akses yang diminta.</li>
+      <li>Klik <b>Deploy → New deployment</b>, pilih jenis <b>Web app</b>.</li>
+      <li>Isi <b>Execute as</b> dengan <b>Me</b>. Untuk <b>Who has access</b>, pilih pembatasan paling ketat yang masih memungkinkan dosen menguji (misalnya hanya pengguna di domain Anda). Nama opsi bisa sedikit berbeda menurut versi editor.</li>
+      <li>Klik <b>Deploy</b>, lalu salin URL yang berakhiran <code>/exec</code>.</li>
+    </ol>
+    <div class="box"><strong>Hati-hati dengan hak akses.</strong> Dengan <b>Execute as: Me</b>, semua orang yang boleh membuka Web App membaca arsip dengan hak akses Anda. Jangan membuka akses untuk publik pada arsip yang berisi data nyata.</div>
+    <div class="box"><strong>Perubahan kode tidak otomatis tampil di URL <code>/exec</code>.</strong> Setelah mengubah kode, buka <b>Deploy → Manage deployments</b>, ikon pensil, pilih <b>New version</b>, lalu <b>Deploy</b>. URL <code>/dev</code> selalu memakai kode terbaru tetapi hanya bisa dibuka oleh editor proyek, jadi cocok untuk menguji.</div>
+
+    <h4>Langkah 6. Uji dan periksa</h4>
+    <ol class="plain">
+      <li>Buka URL Web App dan pastikan dropdown Kategori dan Jenis terisi.</li>
+      <li>Cari dengan kata kunci yang ada di perihal; lalu coba kombinasi kategori dan rentang tanggal.</li>
+      <li>Ganti mode ke isi dokumen, cari satu kata yang ada di dalam file uji, lalu bandingkan hasilnya dengan mode buku agenda.</li>
+      <li>Klik <b>Buka</b> pada salah satu hasil dan pastikan file di Drive yang terbuka sesuai.</li>
+      <li>Cari kata yang tidak ada dan pastikan muncul "0 dokumen ditemukan", bukan halaman kosong atau galat.</li>
+    </ol>
+
+    <h3>5. Pemecahan masalah</h3>
+    <div class="table-scroll">
+      <table style="min-width:680px">
+        <thead><tr><th>Gejala</th><th>Penyebab umum</th><th>Perbaikan</th></tr></thead>
+        <tbody>
+          <tr><td>Halaman putih atau galat "file not found: Index"</td><td>Nama berkas HTML tidak sama persis dengan yang ditulis di <code>doGet()</code></td><td>Samakan nama berkas dan argumen <code>createHtmlOutputFromFile</code>, huruf besar-kecil ikut dihitung</td></tr>
+          <tr><td>Status tertahan di "Mencari..." atau hasil selalu kosong tanpa pesan</td><td>Fungsi server melempar galat, atau mengembalikan objek <code>Date</code></td><td>Cek daftar <b>Executions</b>; pastikan semua nilai yang dikembalikan berupa teks</td></tr>
+          <tr><td>Dropdown tidak terisi</td><td><code>SKEMA</code> atau <code>SINGKATAN_JENIS</code> belum ada di proyek, atau <code>ambilOpsiFilter</code> salah ketik</td><td>Pastikan konstanta sesi 3 dan 4 masih ada dan nama fungsi sama dengan yang dipanggil browser</td></tr>
+          <tr><td>Kode di URL <code>/exec</code> tidak berubah setelah diedit</td><td>Deployment masih memakai versi lama</td><td>Buat <b>New version</b> pada deployment yang sama</td></tr>
+          <tr><td>Pencarian isi tidak menemukan file yang jelas ada</td><td>File baru belum terindeks, atau PDF berupa gambar hasil scan</td><td>Tunggu beberapa saat lalu coba lagi; untuk dokumen scan, andalkan pencarian buku agenda</td></tr>
+          <tr><td>Galat "Invalid argument: q" pada pencarian isi</td><td>Kata kunci memuat tanda kutip yang tidak di-escape</td><td>Pastikan baris <code>replace(...)</code> pada <code>cariIsi</code> tidak terlewat</td></tr>
+          <tr><td>Hasil tampil dengan kode, nama, atau kategori kosong</td><td>Baris itu dibuat sebelum sesi 3 atau 4, sehingga kolom tersebut memang kosong; filter kategori juga tidak akan menemukannya</td><td>Hapus baris uji lama di Sheets, atau lengkapi kolomnya secara manual</td></tr>
+          <tr><td>Pengguna lain melihat halaman izin atau "access denied"</td><td>Pengaturan <b>Who has access</b> terlalu ketat atau belum menyetujui izin</td><td>Periksa pengaturan deployment dan beri tahu pengguna alamat yang benar</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tugas">
+    <div class="section-head"><span class="section-num">D</span><h2>Tugas Praktikum Sesi 5</h2></div>
+    <p class="lede">Rancangan antarmuka didiskusikan bersama kelompok, sedangkan Web App dikerjakan berpasangan. Semuanya dikumpulkan sebelum sesi 6.</p>
+    <ol class="plain">
+      <li><b>Rancang antarmuka pencarian untuk studi kasus kelompok.</b> Tuliskan siapa penggunanya, tiga pencarian yang paling sering mereka lakukan, filter yang disediakan, dan kolom hasil yang ditampilkan.</li>
+      <li><b>Bangun dan deploy Web App</b> yang mencari lewat buku agenda dan isi dokumen, dengan kategori dan jenis yang sesuai skema kelompok Anda.</li>
+      <li><b>Tambahkan satu penyesuaian</b> yang relevan dengan studi kasus, misalnya filter unit pengirim, pengurutan hasil, atau kolom tambahan, dan jelaskan alasannya.</li>
+      <li><b>Uji</b> dengan minimal lima pencarian berbeda, termasuk satu yang tidak menghasilkan apa-apa. Catat hasilnya dalam tabel pengujian.</li>
+      <li><b>Perbarui laporan progres kelompok:</b> ubah status tahap Pencarian, lalu tulis kendala dan rencana sesi berikutnya.</li>
+      <li><b>Kumpulkan:</b> URL Web App, proyek skrip (akses lihat), tangkapan layar hasil pencarian untuk mode agenda dan mode isi, tabel pengujian, dokumen rancangan antarmuka, dan laporan progres terbaru.</li>
+    </ol>
+
+    <h3>Rubrik penilaian</h3>
+    <p>Penilaian mengacu pada indikator RPS: Web App ter-deploy dan pencarian sesuai metadata, ditambah laporan progres proyek akhir kelompok.</p>
+    <div class="table-scroll">
+      <table style="min-width:560px">
+        <thead><tr><th>Indikator</th><th>Kriteria</th><th>Skor</th></tr></thead>
+        <tbody>
+          <tr><td>Web App ter-deploy</td><td>URL dapat dibuka dan halaman tampil; pengaturan akses dipilih dengan alasan yang jelas; versi deployment terbaru</td><td class="score">25</td></tr>
+          <tr><td>Pencarian sesuai metadata</td><td>Kata kunci, kategori, dan rentang tanggal bekerja; mode isi dokumen berjalan; hasil sesuai data di buku agenda</td><td class="score">35</td></tr>
+          <tr><td>Skrip &amp; adaptasi studi kasus</td><td>Hasil ditampilkan dengan <code>textContent</code>; penanganan galat dan kondisi nol hasil; penyesuaian sesuai studi kasus; kode berkomentar</td><td class="score">20</td></tr>
+          <tr><td>Laporan progres kelompok</td><td>Status tahap terisi jujur; kendala dan rencana ditulis</td><td class="score">20</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="referensi">
+    <div class="section-head"><span class="section-num">E</span><h2>Bahan Bacaan</h2></div>
+    <ul class="plain">
+      <li>Dokumentasi resmi Google Apps Script — developers.google.com/apps-script (bagian Web Apps, HTML Service, <code>google.script.run</code>, serta Drive Service: <code>searchFiles</code>).</li>
+      <li>Dokumentasi Google Drive tentang sintaks pencarian dan query file (parameter <code>q</code>).</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <a href="sesi04.html">← Sesi 4</a>
+  <a href="index.html">Kembali ke RPS</a>
+  <a href="sesi06.html">Sesi 6 berikutnya →</a>
+  <div style="margin-top:10px;">Manajemen Dokumen Digital — Philipus Suryo Subandoro</div>
+</footer>
+
+</body>
+</html>
