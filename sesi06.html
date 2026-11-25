@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sesi 6 — Distribusi &amp; Pengamanan Dokumen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EEE3; --paper-raised:#FAF8F2; --ink:#22262B; --ink-soft:#585B52;
+    --navy:#1E3A52; --navy-deep:#13293D; --kraft:#9C6B30; --stamp:#A6402B; --sage:#4E6F5C;
+    --line:#D9D2C0; --line-strong:#C3B99E;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans",-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;}
+  h1,h2,h3{font-family:"Fraunces",Georgia,serif;font-weight:600;color:var(--navy-deep);margin:0;}
+  a{color:var(--navy);}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
+  header.cover{background:var(--navy-deep);color:var(--paper-raised);padding:48px 0 40px;position:relative;overflow:hidden;}
+  header.cover::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,.035) 0 1px,transparent 1px 28px);pointer-events:none;}
+  .cover-inner{position:relative;}
+  .back{display:inline-block;font-size:14px;color:#9FB3C2;text-decoration:none;margin-bottom:22px;}
+  .back:hover{color:#fff;}
+  .eyebrow-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+  .course-code{font-family:"IBM Plex Mono",monospace;font-size:13px;color:#C9B98C;border:1px solid rgba(201,185,140,.45);border-radius:3px;padding:3px 9px;}
+  .doc-type{font-size:14px;color:#9FB3C2;}
+  header.cover h1{font-size:clamp(30px,4.6vw,46px);line-height:1.1;max-width:20ch;color:#fff;}
+  .cover-sub{margin-top:14px;font-size:17px;color:#C7D3DA;max-width:56ch;}
+  .cover-meta{margin-top:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:1px solid rgba(255,255,255,.18);}
+  .cover-meta div{padding:14px 20px 0;border-left:1px solid rgba(255,255,255,.18);}
+  .cover-meta div:first-child{border-left:none;padding-left:0;}
+  .cover-meta .label{font-size:12px;color:#8EA2B1;margin-bottom:2px;}
+  .cover-meta .value{font-size:15px;color:#F2EEE3;font-weight:500;}
+
+  section{padding:44px 0;border-bottom:1px solid var(--line);}
+  section:last-of-type{border-bottom:none;}
+  .section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
+  .section-num{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--kraft);}
+  section h2{font-size:26px;}
+  section h3{font-size:19px;margin:28px 0 8px;}
+  p{max-width:72ch;margin:0 0 12px;}
+  .lede{color:var(--ink-soft);font-size:17px;}
+  ul.plain,ol.plain{max-width:72ch;padding-left:20px;margin:0 0 12px;}
+  ul.plain li,ol.plain li{margin-bottom:6px;}
+
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:4px;margin:8px 0 16px;}
+  table{width:100%;border-collapse:collapse;background:var(--paper-raised);min-width:640px;}
+  th{background:var(--navy-deep);color:#F2EEE3;font-weight:500;font-size:13px;text-align:left;padding:10px 14px;}
+  td{padding:12px 14px;border-top:1px solid var(--line);font-size:14.5px;vertical-align:top;}
+  tr:nth-child(even) td{background:#EFEADC;}
+  td.mono,td code{font-family:"IBM Plex Mono",monospace;font-size:13px;}
+  td.score{font-weight:600;color:var(--kraft);white-space:nowrap;}
+
+  pre{background:var(--navy-deep);color:#E6EDF1;border-radius:4px;padding:16px 18px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;margin:8px 0 16px;max-width:760px;}
+  code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:#E7E1CF;padding:1px 5px;border-radius:3px;}
+  pre code{background:none;padding:0;font-size:inherit;}
+  .cm{color:#8EA2B1;}
+
+  .flow{list-style:none;margin:0;padding:0;max-width:820px;border:1px solid var(--line-strong);border-radius:4px;background:var(--paper-raised);}
+  .flow li{display:flex;gap:18px;padding:16px 20px;border-top:1px solid var(--line);}
+  .flow li:first-child{border-top:none;}
+  .flow .no{flex:0 0 28px;font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:22px;line-height:1.2;color:var(--kraft);}
+  .flow strong{display:block;color:var(--navy-deep);}
+  .flow span.d{font-size:14.5px;color:var(--ink-soft);}
+
+  h4{font-family:"IBM Plex Sans",sans-serif;font-size:16px;font-weight:600;color:var(--navy-deep);margin:22px 0 6px;}
+  h4 code{font-size:.9em;}
+  .box{max-width:72ch;border-left:3px solid var(--stamp);background:var(--paper-raised);padding:14px 18px;margin:16px 0;font-size:15px;}
+  .box strong{color:var(--stamp);}
+  footer{padding:36px 0 56px;text-align:center;color:var(--ink-soft);font-size:13.5px;}
+  footer a{margin:0 10px;}
+
+  .sistem{display:flex;flex-wrap:wrap;align-items:stretch;max-width:900px;margin:12px 0 20px;}
+  .sistem .node{flex:1 1 150px;background:var(--paper-raised);border:1px solid var(--line-strong);border-radius:4px;padding:12px 14px;}
+  .sistem .node b{display:block;font-family:"Fraunces",Georgia,serif;color:var(--navy-deep);font-size:16px;margin-bottom:2px;}
+  .sistem .node span{font-size:13.5px;color:var(--ink-soft);}
+  .sistem .panah{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:var(--kraft);font-size:20px;}
+</style>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap cover-inner">
+    <a class="back" href="index.html">← Kembali ke RPS</a>
+    <div class="eyebrow-row">
+      <span class="course-code">MDD · Sesi 6</span>
+      <span class="doc-type">Pertemuan Minggu 6</span>
+    </div>
+    <h1>Distribusi &amp; Pengamanan Dokumen</h1>
+    <p class="cover-sub">Membagikan dokumen hanya kepada orang yang berhak, memberi tahu mereka secara otomatis, mencabut akses sementara saat waktunya habis, dan mencatat setiap tindakan sebagai jejak audit.</p>
+    <div class="cover-meta">
+      <div><div class="label">Metode</div><div class="value">Praktikum lab, simulasi kasus</div></div>
+      <div><div class="label">Bobot tugas</div><div class="value">10%</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="tujuan">
+    <div class="section-head"><span class="section-num">A</span><h2>Tujuan Pembelajaran</h2></div>
+    <p class="lede">Setelah sesi ini, Anda mampu menerapkan kontrol akses, distribusi otomatis, dan keamanan dasar pada arsip dokumen digital studi kasus kelompok Anda.</p>
+    <ol class="plain">
+      <li>Menjelaskan prinsip keamanan dasar dokumen: hak akses seminimal mungkin, akses berbasis peran, akses berbatas waktu, dan jejak audit.</li>
+      <li>Merancang matriks peran yang menentukan siapa boleh mengakses kategori dokumen apa dengan izin apa.</li>
+      <li>Memakai <code>setSharing()</code>, <code>addViewer()</code>, dan <code>addEditor()</code> untuk membagikan dokumen sesuai peran, serta <code>GmailApp.sendEmail()</code> untuk notifikasi otomatis.</li>
+      <li>Mencabut akses yang kedaluwarsa dengan trigger terjadwal dan mencatat setiap tindakan pada lembar log.</li>
+    </ol>
+    <p><strong>Prasyarat:</strong> skrip sesi 2 sampai 4 sudah berjalan, termasuk konstanta <code>ID_SPREADSHEET</code>, <code>KODE_UNIT</code>, <code>SKEMA</code>, dan fungsi <code>catatSuratMasuk</code>. Web App dari sesi 5 sebaiknya sudah ter-deploy, karena ada bagian kecil yang memperluasnya. Siapkan juga <b>dua atau tiga akun Google uji</b> (misalnya milik anggota kelompok) sebagai penerima akses, dan jangan memakai alamat milik orang lain tanpa izin.</p>
+  </section>
+
+  <section id="alur">
+    <div class="section-head"><span class="section-num">B</span><h2>Alur Kegiatan</h2></div>
+    <ol class="flow">
+      <li><span class="no">1</span><div><strong>Pembukaan &amp; review sesi 5</strong><span class="d">Memeriksa hasil tugas sesi 5 dan membahas kendala pada Web App pencarian.</span></div></li>
+      <li><span class="no">2</span><div><strong>Konsep distribusi dan pengamanan dokumen</strong><span class="d">Prinsip keamanan dasar, tingkat akses dan izin di Drive, notifikasi, akses berbatas waktu, dan jejak audit.</span></div></li>
+      <li><span class="no">3</span><div><strong>Simulasi kasus: merancang matriks peran kelompok</strong><span class="d">Kelompok menganalisis tiga kasus kebocoran akses, lalu menyusun matriks peran, izin, dan masa berlaku untuk studi kasusnya.</span></div></li>
+      <li><span class="no">4</span><div><strong>Praktikum: membangun distribusi otomatis</strong><span class="d">Menulis fungsi pembagian akses, notifikasi email, pencatatan akses dan log, serta trigger pencabutan akses.</span></div></li>
+      <li><span class="no">5</span><div><strong>Uji coba, progres kelompok &amp; penutup</strong><span class="d">Menguji dengan akun uji, memeriksa siapa yang bisa dan tidak bisa membuka dokumen, dan memperbarui laporan progres proyek akhir.</span></div></li>
+    </ol>
+  </section>
+
+  <section id="materi">
+    <div class="section-head"><span class="section-num">C</span><h2>Materi Pembelajaran</h2></div>
+
+    <h3>1. Prinsip keamanan dasar dokumen</h3>
+    <p>Dokumen yang tertata rapi belum tentu aman. Surat keuangan atau kepegawaian yang terbuka untuk semua orang justru menjadi masalah. Sesi ini menambahkan lima kebiasaan berikut pada sistem Anda.</p>
+    <div class="table-scroll">
+      <table style="min-width:720px">
+        <thead><tr><th>Prinsip</th><th>Artinya</th><th>Penerapan pada sistem</th></tr></thead>
+        <tbody>
+          <tr><td><b>Hak akses seminimal mungkin</b></td><td>Beri hanya izin yang benar-benar dibutuhkan</td><td>Pakai <code>VIEW</code> bila penerima hanya perlu membaca; <code>EDIT</code> hanya bila perlu</td></tr>
+          <tr><td><b>Akses berbasis peran</b></td><td>Izin ditentukan oleh peran seseorang, bukan satu per satu secara acak</td><td>Matriks peran dan kategori dokumen</td></tr>
+          <tr><td><b>Akses berbatas waktu</b></td><td>Akses sementara harus berakhir sendiri</td><td>Tanggal kedaluwarsa dan trigger harian yang mencabut akses</td></tr>
+          <tr><td><b>Jejak audit</b></td><td>Tindakan penting tercatat: apa, kapan, oleh siapa</td><td>Lembar <code>Log</code></td></tr>
+          <tr><td><b>Pemberitahuan terbatas</b></td><td>Pihak terkait tahu ada dokumen baru, tanpa membocorkan isinya</td><td>Email berisi nomor arsip, kategori, dan tautan, tanpa perihal</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>Matriks peran: contoh</h4>
+    <p>Matriks peran adalah tabel yang menjawab "siapa boleh membuka kategori apa". Contoh berikut hanya latihan; sesuaikan peran dan kategori dengan studi kasus Anda.</p>
+    <div class="table-scroll">
+      <table style="min-width:640px">
+        <thead><tr><th>Kategori</th><th>Pimpinan</th><th>Staf</th><th>Bendahara</th></tr></thead>
+        <tbody>
+          <tr><td>Umum</td><td>Lihat</td><td>Lihat</td><td>-</td></tr>
+          <tr><td>Kepegawaian</td><td>Lihat</td><td>-</td><td>-</td></tr>
+          <tr><td>Keuangan</td><td>Lihat</td><td>-</td><td>Ubah</td></tr>
+          <tr><td>Akademik</td><td>Lihat</td><td>Lihat</td><td>-</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>2. Tingkat akses dan izin di Drive</h3>
+    <p>Setiap file Drive memiliki dua hal yang diatur terpisah: <b>siapa</b> yang bisa mengakses (tingkat akses) dan <b>apa</b> yang boleh dilakukannya (izin). Keduanya diatur lewat <code>file.setSharing(akses, izin)</code>.</p>
+    <div class="table-scroll">
+      <table style="min-width:700px">
+        <thead><tr><th>Nilai</th><th>Artinya</th><th>Tingkat risiko</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">DriveApp.Access.PRIVATE</td><td>Hanya pemilik dan orang yang ditambahkan secara eksplisit</td><td>Paling aman; dipakai sebagai dasar</td></tr>
+          <tr><td class="mono">DriveApp.Access.DOMAIN_WITH_LINK</td><td>Siapa pun di domain Workspace yang memiliki tautan</td><td>Sedang</td></tr>
+          <tr><td class="mono">DriveApp.Access.ANYONE_WITH_LINK</td><td>Siapa pun di internet yang memiliki tautan</td><td>Tinggi: tautan mudah diteruskan</td></tr>
+          <tr><td class="mono">DriveApp.Access.ANYONE</td><td>Siapa pun, dan bisa ditemukan lewat pencarian</td><td>Sangat tinggi</td></tr>
+          <tr><td class="mono">DriveApp.Permission.VIEW</td><td>Hanya melihat</td><td>Izin yang dianjurkan</td></tr>
+          <tr><td class="mono">DriveApp.Permission.COMMENT</td><td>Melihat dan memberi komentar</td><td>-</td></tr>
+          <tr><td class="mono">DriveApp.Permission.EDIT</td><td>Mengubah isi, mengganti nama, bahkan menghapus file</td><td>Berikan sehemat mungkin</td></tr>
+          <tr><td class="mono">DriveApp.Permission.NONE</td><td>Tidak ada izin umum</td><td>Dipakai bersama <code>PRIVATE</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Untuk memberi izin kepada orang tertentu, pakai <code>file.addViewer(email)</code> atau <code>file.addEditor(email)</code>, dan untuk mencabutnya pakai <code>file.removeViewer(email)</code> atau <code>file.removeEditor(email)</code>.</p>
+    <div class="box"><strong>Kebiasaan buruk yang paling sering:</strong> mengubah akses menjadi "siapa saja yang memiliki tautan" supaya cepat. Tautan itu lalu diteruskan ke grup chat, dan kontrol atas siapa yang membaca dokumen hilang. Sistem kita sebaliknya: dasar <code>PRIVATE</code>, lalu menambah orang satu per satu sesuai peran.</div>
+
+    <h3>3. Notifikasi dan jejak audit</h3>
+    <p><code>GmailApp.sendEmail(penerima, subjek, isi)</code> mengirim email dari akun pemilik skrip. Setiap penerima akses baru diberi tahu secara otomatis.</p>
+    <ul class="plain">
+      <li><b>Isi email dibuat seminimal mungkin.</b> Email tersimpan di banyak tempat, jadi isinya cukup nomor arsip, kategori, dan tautan. Perihal sengaja tidak dicantumkan.</li>
+      <li><b>Ada kuota harian pengiriman email.</b> Cek sisa kuota dengan <code>MailApp.getRemainingDailyQuota()</code> sebelum menguji berulang kali.</li>
+      <li><b>Izin akses berbeda antara dua layanan.</b> <code>GmailApp</code> meminta akses penuh ke Gmail pada layar izin, sedangkan <code>MailApp</code> hanya meminta izin mengirim email. Untuk sistem sungguhan, <code>MailApp</code> lebih aman karena izinnya lebih sempit. Praktikum ini memakai <code>GmailApp</code> sesuai RPS.</li>
+    </ul>
+    <p><b>Jejak audit</b> adalah catatan yang menjawab siapa melakukan apa dan kapan. Pada praktikum ini, lembar <code>Log</code> mencatat tindakan sistem: dokumen diterima, akses diberikan, akses dicabut, kegagalan, dan pencarian lewat Web App. Drive sendiri menyimpan riwayat siapa yang membuka file, tetapi riwayat itu tidak tersedia lewat <code>DriveApp</code>, sehingga log kita bukan pengganti catatan aktivitas Drive.</p>
+    <div class="box"><strong>Alamat pengguna belum tentu terbaca.</strong> <code>Session.getActiveUser().getEmail()</code> sering mengembalikan teks kosong untuk akun Gmail biasa atau saat Web App dijalankan sebagai pemilik. Karena itu kolom pengguna di log kita beri nilai cadangan "(tidak terdeteksi)", dan itu bukan kesalahan kode.</div>
+
+    <h3>4. Alur otomasi sesi ini</h3>
+    <div class="sistem">
+      <div class="node"><b>Dokumen diklasifikasi</b><span>Kategori dan nomor arsip dari sesi 3</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Matriks peran</b><span>Kategori menentukan siapa penerimanya</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Beri akses + email</b><span>addViewer/addEditor, lalu notifikasi</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Catat</b><span>Lembar Akses dan lembar Log</span></div>
+      <div class="panah">→</div>
+      <div class="node"><b>Trigger harian</b><span>Mencabut akses yang sudah kedaluwarsa</span></div>
+    </div>
+
+    <h4>Sintaks baru yang dipakai</h4>
+    <div class="table-scroll">
+      <table style="min-width:720px">
+        <thead><tr><th>Layanan</th><th>Metode</th><th>Fungsinya</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">File</td><td class="mono">file.setSharing(akses, izin)</td><td>Mengatur tingkat akses umum dan izinnya</td></tr>
+          <tr><td class="mono">File</td><td class="mono">addViewer / addEditor / removeViewer / removeEditor</td><td>Menambah atau mencabut akses orang tertentu lewat alamat email</td></tr>
+          <tr><td class="mono">File</td><td class="mono">getSharingAccess(), getViewers(), getEditors()</td><td>Memeriksa siapa yang punya akses, untuk verifikasi</td></tr>
+          <tr><td class="mono">GmailApp</td><td class="mono">GmailApp.sendEmail(penerima, subjek, isi)</td><td>Mengirim email teks biasa</td></tr>
+          <tr><td class="mono">MailApp</td><td class="mono">MailApp.getRemainingDailyQuota()</td><td>Melihat sisa kuota email hari ini</td></tr>
+          <tr><td class="mono">Session</td><td class="mono">Session.getActiveUser().getEmail()</td><td>Mengambil alamat pengguna yang menjalankan skrip, bila terdeteksi</td></tr>
+          <tr><td class="mono">Sheet</td><td class="mono">sheet.getRange(baris, kolom).setValue(nilai)</td><td>Mengubah satu sel, dipakai untuk menandai akses "Dicabut"</td></tr>
+          <tr><td class="mono">Array</td><td class="mono">daftar.some(function (x) {...})</td><td>Bernilai benar bila ada minimal satu elemen yang memenuhi syarat</td></tr>
+          <tr><td class="mono">Date</td><td class="mono">Date.now()</td><td>Waktu sekarang dalam milidetik, untuk menghitung tanggal kedaluwarsa</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>5. Praktikum: membangun distribusi dan pengamanan otomatis</h3>
+
+    <h4>Langkah 1. Tambahkan dua lembar kerja</h4>
+    <p>Di Spreadsheet yang sama, buat dua lembar kerja baru dengan nama persis seperti berikut, lengkap dengan baris judul di baris pertama.</p>
+    <ul class="plain">
+      <li><code>Akses</code>: ID File, Nomor Arsip, Email, Izin, Diberikan, Kedaluwarsa, Status</li>
+      <li><code>Log</code>: Waktu, Aksi, Nomor Arsip, Pengguna, Detail</li>
+    </ul>
+
+    <h4>Langkah 2. Tentukan matriks peran di kode</h4>
+    <p>Ganti setiap <code>GANTI_EMAIL_...</code> dengan alamat akun Google uji milik kelompok Anda. Sengaja tidak diberi alamat contoh agar tidak ada email yang terkirim ke alamat yang salah. Kunci pada <code>AKSES_KATEGORI</code> harus sama dengan kunci pada <code>SKEMA</code>.</p>
+    <pre><code><span class="cm">// Matriks peran: siapa mendapat izin apa, dan berapa hari akses berlaku</span>
+const PERAN = {
+  "Pimpinan":  { email: "GANTI_EMAIL_PIMPINAN",  izin: "VIEW", hari: 30 },
+  "Staf":      { email: "GANTI_EMAIL_STAF",      izin: "VIEW", hari: 7 },
+  "Bendahara": { email: "GANTI_EMAIL_BENDAHARA", izin: "EDIT", hari: 7 }
+};
+
+<span class="cm">// Kategori dokumen -&gt; peran yang boleh mengaksesnya</span>
+const AKSES_KATEGORI = {
+  "Umum":        ["Pimpinan", "Staf"],
+  "Kepegawaian": ["Pimpinan"],
+  "Keuangan":    ["Pimpinan", "Bendahara"],
+  "Akademik":    ["Pimpinan", "Staf"]
+};</code></pre>
+
+    <h4>Langkah 3. Fungsi pencatat log dan akses</h4>
+    <pre><code>function lembar(nama) {
+  return SpreadsheetApp.openById(ID_SPREADSHEET).getSheetByName(nama);
+}
+
+<span class="cm">// Jejak audit: setiap tindakan penting dicatat di lembar Log</span>
+function catatLog(aksi, nomorArsip, detail) {
+  let pengguna = "";
+  try {
+    pengguna = Session.getActiveUser().getEmail();
+  } catch (e) {
+    pengguna = "";
+  }
+  lembar("Log").appendRow([
+    new Date(), aksi, nomorArsip || "-", pengguna || "(tidak terdeteksi)", detail || ""
+  ]);
+}
+
+<span class="cm">// Catatan izin yang diberikan, dipakai trigger untuk mencabutnya nanti</span>
+function catatAkses(idFile, nomorArsip, email, izin, kedaluwarsa) {
+  lembar("Akses").appendRow([idFile, nomorArsip, email, izin, new Date(), kedaluwarsa, "Aktif"]);
+}</code></pre>
+
+    <h4>Langkah 4. Notifikasi dan pembagian akses</h4>
+    <pre><code><span class="cm">// Email singkat tanpa perihal, agar isi dokumen tidak ikut terbawa di kotak surat</span>
+function kirimNotifikasi(email, peran, nomorArsip, kategori, tautan) {
+  const subjek = "[Arsip " + KODE_UNIT + "] Dokumen baru " + nomorArsip;
+  const isi = "Yth. " + peran + ",\n\n" +
+    "Dokumen baru telah diterima dan dibagikan kepada Anda.\n\n" +
+    "Nomor arsip: " + nomorArsip + "\n" +
+    "Kategori: " + kategori + "\n" +
+    "Tautan: " + tautan + "\n\n" +
+    "Tautan hanya dapat dibuka oleh akun yang sudah diberi akses.\n" +
+    "Pesan ini dikirim otomatis oleh sistem arsip.";
+  GmailApp.sendEmail(email, subjek, isi);
+}
+
+<span class="cm">// Membagikan satu file kepada peran yang berhak atas kategorinya</span>
+function bagikanSesuaiPeran(file, kategori, nomorArsip) {
+  const daftarPeran = AKSES_KATEGORI[kategori];
+  if (!daftarPeran) {
+    throw new Error("Kategori tidak ada di AKSES_KATEGORI: " + kategori);
+  }
+
+  <span class="cm">// dasar: tidak terbuka untuk umum maupun lewat tautan</span>
+  file.setSharing(DriveApp.Access.PRIVATE, DriveApp.Permission.NONE);
+
+  daftarPeran.forEach(function (namaPeran) {
+    const p = PERAN[namaPeran];
+    try {
+      if (p.izin === "EDIT") {
+        file.addEditor(p.email);
+      } else {
+        file.addViewer(p.email);
+      }
+      const kedaluwarsa = new Date(Date.now() + p.hari * 24 * 60 * 60 * 1000);
+      catatAkses(file.getId(), nomorArsip, p.email, p.izin, kedaluwarsa);
+      kirimNotifikasi(p.email, namaPeran, nomorArsip, kategori, file.getUrl());
+      catatLog("BERIKAN_AKSES", nomorArsip, namaPeran + " " + p.izin + " selama " + p.hari + " hari");
+    } catch (err) {
+      catatLog("GAGAL_AKSES", nomorArsip, namaPeran + ": " + err.message);
+    }
+  });
+}</code></pre>
+    <p>Setiap peran diproses dalam blok <code>try/catch</code> sendiri. Jika satu alamat salah, penerima lainnya tetap diproses dan kegagalannya tercatat di log, bukan menghentikan seluruh skrip.</p>
+
+    <h4>Langkah 5. Sambungkan ke <code>catatSuratMasuk</code></h4>
+    <p>Pada fungsi <code>catatSuratMasuk</code> dari sesi 4, tambahkan blok berikut <b>setelah</b> langkah mengisi deskripsi file dan <b>sebelum</b> langkah mencatat ke buku agenda.</p>
+    <pre><code>  <span class="cm">// Distribusi: bagikan sesuai peran, kirim notifikasi, catat jejak</span>
+  try {
+    bagikanSesuaiPeran(file, kategori, nomorArsip);
+  } catch (err) {
+    catatLog("GAGAL_DISTRIBUSI", nomorArsip, err.message);
+  }</code></pre>
+    <div class="box"><strong>Mengapa dibungkus <code>try/catch</code>?</strong> Jika pembagian akses gagal dan galatnya dibiarkan, skrip berhenti sebelum dokumen tercatat di buku agenda. Dengan <code>try/catch</code>, dokumen tetap tercatat dan kegagalannya terekam di log. Karena dasar file adalah <code>PRIVATE</code>, kegagalan distribusi hanya berarti dokumen belum terbagi, bukan bocor.</div>
+    <p>Setelah menambahkan <code>GmailApp</code>, jalankan satu fungsi dari editor (misalnya <code>cekKuotaEmail</code> di bawah) dan setujui izin baru. Tanpa itu, trigger dari Form gagal dengan galat otorisasi.</p>
+    <pre><code>function cekKuotaEmail() {
+  Logger.log("Sisa kuota email hari ini: " + MailApp.getRemainingDailyQuota());
+}</code></pre>
+
+    <h4>Langkah 6. Pencabutan akses yang kedaluwarsa</h4>
+    <p>Fungsi ini membaca lembar <code>Akses</code>, mencabut izin yang masa berlakunya sudah lewat, dan menandai barisnya "Dicabut".</p>
+    <pre><code>function cabutAksesKedaluwarsa() {
+  const sheet = lembar("Akses");
+  const data = sheet.getDataRange().getValues();
+  const sekarang = new Date();
+
+  for (let i = 1; i &lt; data.length; i++) {          <span class="cm">// baris 0 = judul kolom</span>
+    const [idFile, nomorArsip, email, izin, diberikan, kedaluwarsa, status] = data[i];
+    if (status !== "Aktif" || !(kedaluwarsa instanceof Date) || kedaluwarsa &gt; sekarang) {
+      continue;
+    }
+    try {
+      const file = DriveApp.getFileById(idFile);
+      if (izin === "EDIT") {
+        file.removeEditor(email);
+      } else {
+        file.removeViewer(email);
+      }
+      sheet.getRange(i + 1, 7).setValue("Dicabut");   <span class="cm">// baris sheet = indeks + 1; kolom 7 = Status</span>
+      catatLog("CABUT_AKSES", nomorArsip, izin + " kedaluwarsa");
+    } catch (err) {
+      catatLog("GAGAL_CABUT", nomorArsip, err.message);
+    }
+  }
+}
+
+<span class="cm">// Memasang trigger harian, dijalankan satu kali, tanpa membuat trigger ganda</span>
+function pasangTriggerExpiry() {
+  const sudahAda = ScriptApp.getProjectTriggers().some(function (t) {
+    return t.getHandlerFunction() === "cabutAksesKedaluwarsa";
+  });
+  if (sudahAda) {
+    Logger.log("Trigger sudah terpasang.");
+    return;
+  }
+  ScriptApp.newTrigger("cabutAksesKedaluwarsa").timeBased().everyDays(1).atHour(1).create();
+}</code></pre>
+    <p>Trigger harian berjalan pada rentang satu jam yang dipilih (di sini sekitar pukul 01.00 hingga 02.00), bukan pada detik yang tepat, dan memakai zona waktu proyek. Periksa zona waktu di <b>Project Settings</b>. Untuk menguji tanpa menunggu, ubah tanggal Kedaluwarsa satu baris di lembar <code>Akses</code> menjadi kemarin, lalu jalankan <code>cabutAksesKedaluwarsa</code> secara manual.</p>
+
+    <h4>Langkah 7. Catat pencarian lewat Web App (sesi 5)</h4>
+    <p>Tambahkan satu baris pada awal fungsi <code>cariMetadata</code>, dan satu baris pada <code>cariIsi</code> tepat setelah blok <code>if (!kata)</code>, lalu buat versi deployment baru:</p>
+    <pre><code>catatLog("CARI_AGENDA", "", "kata=" + (filter.kata || "") + "; kategori=" + (filter.kategori || ""));   <span class="cm">// di cariMetadata</span>
+catatLog("CARI_ISI", "", "kata=" + kata + "; kategori=" + (filter.kategori || ""));                     <span class="cm">// di cariIsi</span></code></pre>
+    <div class="box"><strong>Perhatikan celah di Web App sesi 5.</strong> Web App berjalan dengan <b>Execute as: Me</b>, jadi siapa pun yang boleh membuka Web App melihat metadata <b>semua</b> dokumen, termasuk kategori yang tidak berhak mereka akses. Distribusi di sesi ini hanya melindungi file di Drive. Membatasi hasil pencarian per peran adalah tantangan di akhir tugas.</div>
+
+    <h4>Langkah 8. Uji dan periksa</h4>
+    <ol class="plain">
+      <li>Jalankan <code>pasangTriggerExpiry</code> sekali dan pastikan trigger muncul di menu <b>Pemicu</b>.</li>
+      <li>Kirim tiga dokumen uji dengan kategori berbeda (misalnya Umum, Kepegawaian, Keuangan).</li>
+      <li>Periksa kotak masuk akun uji: penerima yang benar menerima email, dan yang tidak berhak tidak menerima apa pun.</li>
+      <li>Buka tautan dari akun uji yang berhak (harus terbuka) dan dari akun yang tidak berhak (harus ditolak).</li>
+      <li>Periksa lembar <code>Akses</code> dan <code>Log</code>: tiap pemberian akses tercatat, dan tidak ada baris <code>GAGAL_...</code> yang tidak Anda duga.</li>
+      <li>Verifikasi dari kode dengan fungsi di bawah, dengan mengganti <code>ID_FILE_UJI</code>.</li>
+      <li>Uji kedaluwarsa: ubah satu tanggal Kedaluwarsa menjadi kemarin, jalankan <code>cabutAksesKedaluwarsa</code>, lalu pastikan akun uji tidak bisa membuka file lagi.</li>
+    </ol>
+    <pre><code>function periksaAkses() {
+  const file = DriveApp.getFileById("ID_FILE_UJI");
+  Logger.log("Akses umum: " + file.getSharingAccess() + " / " + file.getSharingPermission());
+  Logger.log("Viewer: " + file.getViewers().map(function (u) { return u.getEmail(); }).join(", "));
+  Logger.log("Editor: " + file.getEditors().map(function (u) { return u.getEmail(); }).join(", "));
+}</code></pre>
+    <p>Akses umum yang benar adalah <code>PRIVATE</code>. Jika muncul <code>ANYONE</code> atau <code>ANYONE_WITH_LINK</code>, ada langkah yang salah.</p>
+
+    <h3>6. Pemecahan masalah</h3>
+    <div class="table-scroll">
+      <table style="min-width:700px">
+        <thead><tr><th>Gejala</th><th>Penyebab umum</th><th>Perbaikan</th></tr></thead>
+        <tbody>
+          <tr><td>Baris <code>GAGAL_AKSES</code> dengan pesan <code>Invalid email</code></td><td>Placeholder <code>GANTI_EMAIL_...</code> belum diganti, atau email salah ketik</td><td>Isi dengan alamat akun Google uji yang benar</td></tr>
+          <tr><td>Baris <code>GAGAL_DISTRIBUSI: Kategori tidak ada di AKSES_KATEGORI</code></td><td>Kunci kategori di <code>AKSES_KATEGORI</code> tidak sama persis dengan <code>SKEMA</code></td><td>Samakan teksnya, termasuk huruf besar-kecil</td></tr>
+          <tr><td>Form dikirim, tetapi galat otorisasi di daftar Eksekusi</td><td>Izin baru untuk <code>GmailApp</code> belum disetujui</td><td>Jalankan fungsi apa pun dari editor dan setujui izin yang diminta</td></tr>
+          <tr><td>Email tidak sampai</td><td>Masuk folder spam, kuota harian habis, atau alamat penerima salah</td><td>Cek spam, jalankan <code>cekKuotaEmail</code>, dan periksa lembar <code>Log</code></td></tr>
+          <tr><td>Galat saat membagikan ke alamat di luar domain</td><td>Admin domain Workspace membatasi berbagi ke pihak luar</td><td>Gunakan akun uji dalam domain yang sama atau akun Gmail biasa bila diizinkan</td></tr>
+          <tr><td>Penerima tidak bisa membuka tautan di email</td><td>Penerima membuka dengan akun Google yang berbeda dari alamat yang diberi akses</td><td>Pastikan masuk dengan akun yang sama dengan alamat email penerima</td></tr>
+          <tr><td>Akses tidak dicabut setelah kedaluwarsa</td><td>Trigger belum dipasang, tanggal belum lewat, kolom Kedaluwarsa bukan berformat tanggal, atau status bukan "Aktif"</td><td>Cek menu Pemicu, format sel, dan jalankan <code>cabutAksesKedaluwarsa</code> manual</td></tr>
+          <tr><td>Kolom Pengguna di log bertuliskan "(tidak terdeteksi)"</td><td>Akun Gmail biasa atau Web App dijalankan sebagai pemilik</td><td>Normal; bukan kesalahan kode</td></tr>
+          <tr><td>Fungsi pencabutan berjalan dua kali</td><td><code>pasangTriggerExpiry</code> dijalankan berulang tanpa pengecekan, atau trigger dibuat manual juga</td><td>Hapus trigger ganda di menu Pemicu</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tugas">
+    <div class="section-head"><span class="section-num">D</span><h2>Tugas Praktikum Sesi 6</h2></div>
+    <p class="lede">Matriks peran dirancang bersama kelompok, sedangkan skripnya dikerjakan berpasangan. Semuanya dikumpulkan sebelum sesi 7.</p>
+    <ol class="plain">
+      <li><b>Rancang matriks peran dan kebijakan akses studi kasus kelompok.</b> Buat tabel peran (minimal dua), kategori dokumen, izin, dan masa berlaku akses, lalu tuliskan alasan pemilihan izin dengan prinsip hak akses seminimal mungkin.</li>
+      <li><b>Terapkan distribusi otomatis:</b> dokumen yang masuk dibagikan sesuai matriks, penerima mendapat notifikasi email, dan setiap pemberian akses tercatat di lembar <code>Akses</code> dan <code>Log</code>.</li>
+      <li><b>Pasang trigger pencabutan akses</b> dan buktikan akses kedaluwarsa benar-benar dicabut.</li>
+      <li><b>Catat pencarian pada Web App</b> ke lembar <code>Log</code> dan deploy versi terbarunya.</li>
+      <li><b>Uji</b> dengan minimal tiga dokumen pada tiga kategori berbeda dan minimal dua akun uji. Buktikan bahwa akun yang berhak dapat membuka dan akun yang tidak berhak tidak dapat membuka. Catat hasilnya dalam tabel pengujian.</li>
+      <li><b>Perbarui laporan progres kelompok:</b> ubah status tahap Distribusi &amp; pengamanan, lalu tulis kendala dan rencana sesi berikutnya.</li>
+      <li><b>Kumpulkan:</b> tabel matriks peran dan kebijakan akses, proyek skrip (akses lihat), tautan Spreadsheet (akses lihat) dengan lembar Akses dan Log, tangkapan layar email notifikasi, hasil <code>periksaAkses</code>, tabel pengujian, dan laporan progres terbaru.</li>
+    </ol>
+    <div class="box"><strong>Tantangan (nilai tambah, tidak wajib):</strong> batasi hasil pencarian Web App sesuai peran pengguna, sehingga kategori yang tidak berhak diakses tidak muncul sama sekali. Jelaskan batasan teknisnya, terutama soal terbacanya alamat pengguna pada deployment Anda.</div>
+
+    <h3>Rubrik penilaian</h3>
+    <p>Penilaian mengacu pada indikator RPS: sharing sesuai peran serta notifikasi dan log akses tercatat, ditambah laporan progres proyek akhir kelompok.</p>
+    <div class="table-scroll">
+      <table style="min-width:560px">
+        <thead><tr><th>Indikator</th><th>Kriteria</th><th>Skor</th></tr></thead>
+        <tbody>
+          <tr><td>Sharing sesuai peran</td><td>Matriks peran logis dan memakai hak akses seminimal mungkin; file berdasar <code>PRIVATE</code>; penerima yang berhak dapat membuka dan yang tidak berhak tidak dapat membuka</td><td class="score">30</td></tr>
+          <tr><td>Notifikasi &amp; log akses tercatat</td><td>Email notifikasi terkirim tanpa membocorkan isi; lembar Akses dan Log terisi lengkap dan konsisten dengan kejadian sebenarnya</td><td class="score">30</td></tr>
+          <tr><td>Kedaluwarsa akses, skrip &amp; adaptasi</td><td>Trigger terpasang tanpa duplikat dan pencabutan terbukti; penanganan galat; penyesuaian sesuai studi kasus; kode berkomentar</td><td class="score">20</td></tr>
+          <tr><td>Laporan progres kelompok</td><td>Status tahap terisi jujur; kendala dan rencana ditulis</td><td class="score">20</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="referensi">
+    <div class="section-head"><span class="section-num">E</span><h2>Bahan Bacaan</h2></div>
+    <ul class="plain">
+      <li>Dokumentasi resmi Google Apps Script — developers.google.com/apps-script (bagian Drive Service: <code>File</code> dan <code>DriveApp.Access</code>/<code>Permission</code>, Gmail Service, Mail Service, dan Installable Triggers).</li>
+      <li>Panduan Google Workspace tentang berbagi file dan pengaturan akses di support.google.com.</li>
+      <li>Pedoman keamanan informasi dan kearsipan di organisasi studi kasus Anda (jika ada).</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <a href="sesi05.html">← Sesi 5</a>
+  <a href="index.html">Kembali ke RPS</a>
+  <a href="sesi07.html">Sesi 7 berikutnya →</a>
+  <div style="margin-top:10px;">Manajemen Dokumen Digital — Philipus Suryo Subandoro</div>
+</footer>
+
+</body>
+</html>
